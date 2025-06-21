@@ -1,0 +1,23 @@
+-- Verificar estructura de todas las tablas según el diagrama ER
+SELECT 'USUARIOS' as tabla, COUNT(*) as registros FROM USUARIOS
+UNION ALL
+SELECT 'CLIENTES' as tabla, COUNT(*) as registros FROM CLIENTES
+UNION ALL
+SELECT 'PROVEEDORES' as tabla, COUNT(*) as registros FROM PROVEEDORES
+UNION ALL
+SELECT 'CATEGORIAS' as tabla, COUNT(*) as registros FROM CATEGORIAS
+UNION ALL
+SELECT 'MARCAS' as tabla, COUNT(*) as registros FROM MARCAS
+UNION ALL
+SELECT 'PRODUCTOS' as tabla, COUNT(*) as registros FROM PRODUCTOS
+UNION ALL
+SELECT 'LOTES_INVENTARIO' as tabla, COUNT(*) as registros FROM LOTES_INVENTARIO
+UNION ALL
+SELECT 'VENTAS' as tabla, COUNT(*) as registros FROM VENTAS
+UNION ALL
+SELECT 'DETALLE_VENTAS' as tabla, COUNT(*) as registros FROM DETALLE_VENTAS
+UNION ALL
+SELECT 'CAJA' as tabla, COUNT(*) as registros FROM CAJA
+UNION ALL
+SELECT 'NOTIFICACIONES' as tabla, COUNT(*) as registros FROM NOTIFICACIONES
+ORDER BY tabla;
