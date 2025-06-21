@@ -1,0 +1,71 @@
+<div th:fragment="sidebar" class="sidebar d-flex flex-column p-3">
+    <div class="text-center mb-4">
+        <h4 class="text-white">
+            <i class="fas fa-store me-2"></i>
+            Tienda System
+        </h4>
+        <small class="text-white-50">Sistema de Inventario</small>
+    </div>
+    
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="/dashboard" class="nav-link" th:classappend="${#request.requestURI == '/dashboard' ? 'active' : ''}">
+                <i class="fas fa-tachometer-alt me-2"></i>
+                Dashboard
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a href="/dashboard/ventas" class="nav-link" th:classappend="${#strings.contains(#request.requestURI, '/ventas') ? 'active' : ''}">
+                <i class="fas fa-cash-register me-2"></i>
+                Ventas
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a href="/dashboard/productos" class="nav-link" th:classappend="${#strings.contains(#request.requestURI, '/productos') ? 'active' : ''}">
+                <i class="fas fa-box me-2"></i>
+                Productos
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a href="/dashboard/inventario" class="nav-link" th:classappend="${#strings.contains(#request.requestURI, '/inventario') ? 'active' : ''}">
+                <i class="fas fa-warehouse me-2"></i>
+                Inventario
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a href="/dashboard/clientes" class="nav-link" th:classappend="${#strings.contains(#request.requestURI, '/clientes') ? 'active' : ''}">
+                <i class="fas fa-users me-2"></i>
+                Clientes
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a href="/dashboard/reportes" class="nav-link" th:classappend="${#strings.contains(#request.requestURI, '/reportes') ? 'active' : ''}">
+                <i class="fas fa-chart-bar me-2"></i>
+                Reportes
+            </a>
+        </li>
+        
+        <hr class="text-white-50">
+        
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="fas fa-cog me-2"></i>
+                Configuración
+            </a>
+        </li>
+    </ul>
+    
+    <div class="mt-auto">
+        <div class="text-center text-white-50">
+            <small>
+                <div id="current-date"></div>
+                <div id="current-time"></div>
+            </small>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout}">
+<head>
+    <title>Productos - Sistema de Inventario</title>
+</head>
+<body>
+    <main th:fragment="content" class="p-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-0">Gestión de Productos</h1>
+                <p class="text-muted">Administra el catálogo de productos</p>
+            </div>
+            <div>
+                <button class="btn btn-success btn-custom me-2" data-bs-toggle="modal" data-bs-target="#nuevoProductoModal">
+                    <i class="fas fa-plus me-2"></i>Nuevo Producto
+                </button>
+                <button class="btn btn-outline-primary btn-custom" onclick="location.reload()">
+                    <i class="fas fa-sync-alt me-2"></i>Actualizar
+                </button>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="buscarProducto" class="form-label">Buscar Producto</label>
+                        <input type="text" class="form-control" id="buscarProducto" placeholder="Nombre o código de barras">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filtroCategoria" class="form-label">Categoría</label>
+                        <select class="form-select" id="filtroCategoria">
+                            <option value="">Todas las categorías</option>
+                            <option value="1">Electrónicos</option>
+                            <option value="2">Ropa</option>
+                            <option value="3">Hogar</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filtroMarca" class="form-label">Marca</label>
+                        <select class="form-select" id="filtroMarca">
+                            <option value="">Todas las marcas</option>
+                            <option value="1">Samsung</option>
+                            <option value="2">Apple</option>
+                            <option value="3">Nike</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="filtroStock" class="form-label">Stock</label>
+                        <select class="form-select" id="filtroStock">
+                            <option value="">Todos</option>
+                            <option value="bajo">Stock Bajo</option>
+                            <option value="sin">Sin Stock</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Productos -->
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Lista de Productos</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="productosTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Marca</th>
+                                <th>Stock Actual</th>
+                                <th>Stock Mínimo</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>123456789</td>
+                                <td>Smartphone Galaxy S23</td>
+                                <td>Electrónicos</td>
+                                <td>Samsung</td>
+                                <td><span class="badge bg-warning">5</span></td>
+                                <td>10</td>
+                                <td>$899.99</td>
+                                <td><span class="badge bg-success">Activo</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" onclick="editarProducto(1)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info me-1" onclick="verProducto(1)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarProducto(1)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>987654321</td>
+                                <td>iPhone 15 Pro</td>
+                                <td>Electrónicos</td>
+                                <td>Apple</td>
+                                <td><span class="badge bg-danger">0</span></td>
+                                <td>5</td>
+                                <td>$1299.99</td>
+                                <td><span class="badge bg-success">Activo</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" onclick="editarProducto(2)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info me-1" onclick="verProducto(2)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarProducto(2)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Nuevo Producto -->
+        <div class="modal fade" id="nuevoProductoModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nuevo Producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="nuevoProductoForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre *</label>
+                                        <input type="text" class="form-control" id="nombre" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="codigoBarras" class="form-label">Código de Barras</label>
+                                        <input type="text" class="form-control" id="codigoBarras">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="descripcion" rows="3"></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="categoria" class="form-label">Categoría *</label>
+                                        <select class="form-select" id="categoria" required>
+                                            <option value="">Seleccionar categoría</option>
+                                            <option value="1">Electrónicos</option>
+                                            <option value="2">Ropa</option>
+                                            <option value="3">Hogar</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="marca" class="form-label">Marca *</label>
+                                        <select class="form-select" id="marca" required>
+                                            <option value="">Seleccionar marca</option>
+                                            <option value="1">Samsung</option>
+                                            <option value="2">Apple</option>
+                                            <option value="3">Nike</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="stockMinimo" class="form-label">Stock Mínimo</label>
+                                        <input type="number" class="form-control" id="stockMinimo" min="0" value="0">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="stockActual" class="form-label">Stock Actual</label>
+                                        <input type="number" class="form-control" id="stockActual" min="0" value="0">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" onclick="guardarProducto()">Guardar Producto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function editarProducto(id) {
+            // Implementar edición de producto
+            alert('Editar producto ID: ' + id);
+        }
+
+        function verProducto(id) {
+            // Implementar vista de producto
+            alert('Ver producto ID: ' + id);
+        }
+
+        function eliminarProducto(id) {
+            if (confirm('¿Está seguro de que desea eliminar este producto?')) {
+                // Implementar eliminación
+                alert('Eliminar producto ID: ' + id);
+            }
+        }
+
+        function guardarProducto() {
+            // Implementar guardado de producto
+            const form = document.getElementById('nuevoProductoForm');
+            if (form.checkValidity()) {
+                alert('Producto guardado exitosamente');
+                $('#nuevoProductoModal').modal('hide');
+                form.reset();
+            } else {
+                form.reportValidity();
+            }
+        }
+
+        // Filtros en tiempo real
+        document.getElementById('buscarProducto').addEventListener('input', function() {
+            // Implementar filtro de búsqueda
+        });
+    </script>
+</body>
+</html>
