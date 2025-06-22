@@ -7,6 +7,14 @@ const currentUser = null
 
 // Inicialización cuando el DOM está listo
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("Dashboard cargado correctamente")
+
+  // Actualizar fecha y hora cada minuto
+  setInterval(() => {
+    const now = new Date()
+    const dateString = now.toLocaleDateString("es-ES") + " " + now.toLocaleTimeString("es-ES")
+    console.log("Fecha actual:", dateString)
+  }, 60000)
   initializeDashboard()
   loadNotifications()
   startRealTimeUpdates()
