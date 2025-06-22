@@ -22,7 +22,8 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Deshabilitamos CSRF para APIs REST
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/**", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/static/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/ventas/**").hasAnyRole("ADMIN", "VENDEDOR")
                 .anyRequest().authenticated()

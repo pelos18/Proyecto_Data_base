@@ -38,4 +38,8 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     @Query("SELECT c FROM Categoria c WHERE c.idCategoria NOT IN " +
            "(SELECT DISTINCT p.categoria.idCategoria FROM Producto p WHERE p.activo = true)")
     List<Categoria> findCategoriasSinProductos();
+
+    // Contar productos activos por categoría
+    @Query("SELECT COUNT(p) FROM Producto p WHERE p.categoria.idCategoria = :categoriaId AND p.activo = true")
+    Long countByCategoriaIdCategoriaAndActivoTrue(@Param("categoriaId") Long categoriaId);
 }

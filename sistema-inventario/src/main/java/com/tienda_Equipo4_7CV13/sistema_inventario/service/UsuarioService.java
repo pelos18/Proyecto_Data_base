@@ -34,14 +34,20 @@ public class UsuarioService {
     
     // Obtener usuario por nombre de usuario
     public Usuario findByUsuario(String usuario) {
-        return usuarioRepository.findByUsuario(usuario)
-            .orElseThrow(() -> new UsuarioException.UsuarioNotFoundException(usuario));
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByUsuario(usuario);
+        if (usuarioOpt.isPresent()) {
+            return usuarioOpt.get();
+        }
+        throw new RuntimeException("Usuario no encontrado: " + usuario);
     }
     
     // Obtener usuario activo por nombre de usuario
     public Usuario findByUsuarioActivo(String usuario) {
-        return usuarioRepository.findByUsuarioAndActivoTrue(usuario)
-            .orElseThrow(() -> new UsuarioException.UsuarioInactivoException(usuario));
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByUsuarioAndActivoTrue(usuario);
+        if (usuarioOpt.isPresent()) {
+            return usuarioOpt.get();
+        }
+        throw new RuntimeException("Usuario no encontrado o inactivo: " + usuario);
     }
     
     // Crear nuevo usuario
