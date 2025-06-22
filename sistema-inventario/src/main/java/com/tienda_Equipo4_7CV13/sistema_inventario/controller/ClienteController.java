@@ -1,78 +1,63 @@
 package com.tienda_Equipo4_7CV13.sistema_inventario.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import com.tienda_Equipo4_7CV13.sistema_inventario.entity.Cliente;
-import com.tienda_Equipo4_7CV13.sistema_inventario.service.ClienteService;
-import jakarta.validation.Valid;
-import java.util.List;
+import com.tienda_Equipo4_7CV13.sistema_inventario.repository.ClienteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@RestController
+@Controller
 @RequestMapping("/api/clientes")
 public class ClienteController {
-    
+
     @Autowired
-    private ClienteService clienteService;
-    
+    private ClienteRepository clienteRepository;
+
     @GetMapping
-    public ResponseEntity<List<Cliente>> getAllClientes() {
+    public String listarClientes(Model model) {
+        model.addAttribute("clientes", clienteRepository.findAll());
+        return "clientes/lista";
+    }
+
+    @GetMapping("/nuevo")
+    public String nuevoClienteForm(Model model) {
+        model.addAttribute("cliente", new Cliente());
+        return "clientes/formulario";
+    }
+
+    @PostMapping("/guardar")
+    public String guardarCliente(@ModelAttribute Cliente cliente, 
+                               RedirectAttributes redirectAttributes) {
         try {
-            List<Cliente> clientes = clienteService.findAll();
-            return ResponseEntity.ok(clientes);
+            clienteRepository.save(cliente);
+            redirectAttributes.addFlashAttribute("success", "Cliente guardado exitosamente");
+            return "redirect:/api/clientes";
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            redirectAttributes.addFlashAttribute("error", 
+                "Error al guardar cliente: " + e.getMessage());
+            return "redirect:/api/clientes/nuevo";
         }
     }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Cliente> getClienteById(@PathVariable Long id) {
-        try {
-            Cliente cliente = clienteService.findById(id);
-            return cliente != null ? ResponseEntity.ok(cliente) : ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+
+    @GetMapping("/editar/{id}")
+    public String editarClienteForm(@PathVariable Long id, Model model) {
+        Cliente cliente = clienteRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        model.addAttribute("cliente", cliente);
+        return "clientes/formulario";
     }
-    
-    @PostMapping
-    public ResponseEntity<Cliente> createCliente(@Valid @RequestBody Cliente cliente) {
+
+    @PostMapping("/eliminar/{id}")
+    public String eliminarCliente(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            Cliente nuevoCliente = clienteService.save(cliente);
-            return ResponseEntity.ok(nuevoCliente);
+            clienteRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("success", "Cliente eliminado exitosamente");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            redirectAttributes.addFlashAttribute("error", 
+                "Error al eliminar cliente: " + e.getMessage());
         }
-    }
-    
-    @PutMapping("/{id}")
-    public ResponseEntity<Cliente> updateCliente(@PathVariable Long id, @Valid @RequestBody Cliente cliente) {
-        try {
-            cliente.setIdCliente(id);
-            Cliente clienteActualizado = clienteService.save(cliente);
-            return ResponseEntity.ok(clienteActualizado);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
-        try {
-            clienteService.deleteById(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-    
-    @GetMapping("/buscar")
-    public ResponseEntity<List<Cliente>> buscarClientes(@RequestParam String termino) {
-        try {
-            List<Cliente> clientes = clienteService.buscarPorNombre(termino);
-            return ResponseEntity.ok(clientes);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return "redirect:/api/clientes";
     }
 }
