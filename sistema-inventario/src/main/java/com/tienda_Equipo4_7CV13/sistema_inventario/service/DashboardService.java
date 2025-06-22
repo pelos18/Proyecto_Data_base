@@ -1,9 +1,7 @@
 package com.tienda_Equipo4_7CV13.sistema_inventario.service;
 
-import com.tienda_Equipo4_7CV13.sistema_inventario.dto.DashboardDTO;
-import com.tienda_Equipo4_7CV13.sistema_inventario.dto.EstadisticaVentaDTO;
-import com.tienda_Equipo4_7CV13.sistema_inventario.dto.ProductoDTO;
-import com.tienda_Equipo4_7CV13.sistema_inventario.dto.VentaDTO;
+import com.tienda_Equipo4_7CV13.sistema_inventario.entity.Producto;
+import com.tienda_Equipo4_7CV13.sistema_inventario.entity.Venta;
 import com.tienda_Equipo4_7CV13.sistema_inventario.repository.ProductoRepository;
 import com.tienda_Equipo4_7CV13.sistema_inventario.repository.VentaRepository;
 import com.tienda_Equipo4_7CV13.sistema_inventario.repository.ClienteRepository;
@@ -11,13 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class DashboardService {
     
     private static final Logger logger = LoggerFactory.getLogger(DashboardService.class);
@@ -33,120 +33,149 @@ public class DashboardService {
     
     public Long getTotalProductos() {
         try {
-            logger.info("Obteniendo total de productos...");
+            logger.info("=== CONSULTANDO TOTAL DE PRODUCTOS ===");
             Long total = productoRepository.count();
-            logger.info("Total de productos: {}", total);
+            logger.info("Total de productos encontrados en BD: {}", total);
             return total;
         } catch (Exception e) {
-            logger.error("Error al obtener total de productos: ", e);
+            logger.error("Error al consultar total de productos: ", e);
             return 0L;
         }
     }
     
     public Long getTotalClientes() {
         try {
-            logger.info("Obteniendo total de clientes...");
+            logger.info("=== CONSULTANDO TOTAL DE CLIENTES ===");
             Long total = clienteRepository.count();
-            logger.info("Total de clientes: {}", total);
+            logger.info("Total de clientes encontrados en BD: {}", total);
             return total;
         } catch (Exception e) {
-            logger.error("Error al obtener total de clientes: ", e);
+            logger.error("Error al consultar total de clientes: ", e);
             return 0L;
         }
     }
     
     public Long getVentasHoy() {
         try {
-            logger.info("Obteniendo ventas de hoy...");
-            Long total = ventaRepository.countVentasDelDia();
-            logger.info("Ventas de hoy: {}", total);
-            return total != null ? total : 0L;
+            logger.info("=== CONSULTANDO VENTAS DE HOY ===");
+            LocalDate hoy = LocalDate.now();
+            logger.info("Buscando ventas para la fecha: {}", hoy);
+            
+            List<Venta> ventasHoy = ventaRepository.findByFechaVenta(hoy);
+            Long total = (long) ventasHoy.size();
+            
+            logger.info("Ventas encontradas para hoy: {}", total);
+            return total;
         } catch (Exception e) {
-            logger.error("Error al obtener ventas de hoy: ", e);
+            logger.error("Error al consultar ventas de hoy: ", e);
             return 0L;
         }
     }
     
     public BigDecimal getIngresosHoy() {
         try {
-            logger.info("Obteniendo ingresos de hoy...");
-            BigDecimal total = ventaRepository.getIngresosDelDia();
-            logger.info("Ingresos de hoy: {}", total);
-            return total != null ? total : BigDecimal.ZERO;
+            logger.info("=== CONSULTANDO INGRESOS DE HOY ===");
+            LocalDate hoy = LocalDate.now();
+            logger.info("Calculando ingresos para la fecha: {}", hoy);
+            
+            List<Venta> ventasHoy = ventaRepository.findByFechaVenta(hoy);
+            BigDecimal total = ventasHoy.stream()
+                .filter(v -> "ACEPTADA".equals(v.getEstado()))
+                .map(Venta::getTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            
+            logger.info("Ingresos calculados para hoy: {}", total);
+            return total;
         } catch (Exception e) {
-            logger.error("Error al obtener ingresos de hoy: ", e);
+            logger.error("Error al consultar ingresos de hoy: ", e);
             return BigDecimal.ZERO;
         }
     }
     
     public BigDecimal getIngresosMes() {
         try {
-            logger.info("Obteniendo ingresos del mes...");
-            BigDecimal total = ventaRepository.getIngresosDelMes();
-            logger.info("Ingresos del mes: {}", total);
-            return total != null ? total : BigDecimal.ZERO;
+            logger.info("=== CONSULTANDO INGRESOS DEL MES ===");
+            LocalDate inicioMes = LocalDate.now().withDayOfMonth(1);
+            LocalDate finMes = LocalDate.now();
+            logger.info("Calculando ingresos del {} al {}", inicioMes, finMes);
+            
+            List<Venta> ventasMes = ventaRepository.findByFechaVentaBetween(inicioMes, finMes);
+            BigDecimal total = ventasMes.stream()
+                .filter(v -> "ACEPTADA".equals(v.getEstado()))
+                .map(Venta::getTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            
+            logger.info("Ingresos calculados para el mes: {}", total);
+            return total;
         } catch (Exception e) {
-            logger.error("Error al obtener ingresos del mes: ", e);
+            logger.error("Error al consultar ingresos del mes: ", e);
             return BigDecimal.ZERO;
         }
     }
     
-    public List<ProductoDTO> getProductosStockBajo() {
+    public List<Producto> getProductosStockBajo() {
         try {
-            logger.info("Obteniendo productos con stock bajo...");
-            List<ProductoDTO> productos = new ArrayList<>();
-            // Por ahora retornamos lista vacía para evitar errores
-            logger.info("Productos con stock bajo: {}", productos.size());
-            return productos;
+            logger.info("=== CONSULTANDO PRODUCTOS CON STOCK BAJO ===");
+            List<Producto> todosProductos = productoRepository.findAll();
+            List<Producto> productosStockBajo = todosProductos.stream()
+                .filter(p -> p.getStockActual() <= p.getStockMinimo())
+                .collect(Collectors.toList());
+            
+            logger.info("Productos con stock bajo encontrados: {}", productosStockBajo.size());
+            return productosStockBajo;
         } catch (Exception e) {
-            logger.error("Error al obtener productos con stock bajo: ", e);
-            return new ArrayList<>();
+            logger.error("Error al consultar productos con stock bajo: ", e);
+            return List.of();
         }
     }
     
-    public List<VentaDTO> getVentasRecientes() {
+    public List<Venta> getVentasRecientes() {
         try {
-            logger.info("Obteniendo ventas recientes...");
-            List<VentaDTO> ventas = new ArrayList<>();
-            // Por ahora retornamos lista vacía para evitar errores
-            logger.info("Ventas recientes: {}", ventas.size());
-            return ventas;
+            logger.info("=== CONSULTANDO VENTAS RECIENTES ===");
+            List<Venta> todasVentas = ventaRepository.findAll();
+            List<Venta> ventasRecientes = todasVentas.stream()
+                .sorted((v1, v2) -> {
+                    // Ordenar por fecha descendente, luego por ID descendente
+                    int fechaComparison = v2.getFechaVenta().compareTo(v1.getFechaVenta());
+                    if (fechaComparison != 0) {
+                        return fechaComparison;
+                    }
+                    return v2.getIdVenta().compareTo(v1.getIdVenta());
+                })
+                .limit(10)
+                .collect(Collectors.toList());
+            
+            logger.info("Ventas recientes encontradas: {}", ventasRecientes.size());
+            return ventasRecientes;
         } catch (Exception e) {
-            logger.error("Error al obtener ventas recientes: ", e);
-            return new ArrayList<>();
+            logger.error("Error al consultar ventas recientes: ", e);
+            return List.of();
         }
     }
     
-    public List<EstadisticaVentaDTO> getVentasPorDia() {
+    public void verificarConexionBaseDatos() {
         try {
-            logger.info("Obteniendo ventas por día...");
-            List<EstadisticaVentaDTO> ventas = new ArrayList<>();
-            // Por ahora retornamos lista vacía para evitar errores
-            logger.info("Ventas por día: {}", ventas.size());
-            return ventas;
+            logger.info("=== VERIFICANDO CONEXIÓN A BASE DE DATOS ===");
+            
+            // Verificar tablas principales
+            Long productos = productoRepository.count();
+            Long clientes = clienteRepository.count();
+            Long ventas = ventaRepository.count();
+            
+            logger.info("RESUMEN DE BASE DE DATOS:");
+            logger.info("- Productos: {}", productos);
+            logger.info("- Clientes: {}", clientes);
+            logger.info("- Ventas: {}", ventas);
+            
+            if (productos == 0 && clientes == 0 && ventas == 0) {
+                logger.warn("⚠️  LA BASE DE DATOS PARECE ESTAR VACÍA");
+                logger.warn("⚠️  Verifica que estés conectado a la base de datos correcta");
+            } else {
+                logger.info("✅ BASE DE DATOS CONECTADA Y CON DATOS");
+            }
+            
         } catch (Exception e) {
-            logger.error("Error al obtener ventas por día: ", e);
-            return new ArrayList<>();
-        }
-    }
-    
-    public DashboardDTO getDashboardData() {
-        try {
-            logger.info("Construyendo datos del dashboard...");
-            DashboardDTO dashboard = new DashboardDTO();
-            dashboard.setTotalProductos(getTotalProductos());
-            dashboard.setTotalClientes(getTotalClientes());
-            dashboard.setVentasHoy(getVentasHoy());
-            dashboard.setIngresosHoy(getIngresosHoy());
-            dashboard.setIngresosMes(getIngresosMes());
-            dashboard.setProductosStockBajo(getProductosStockBajo());
-            dashboard.setVentasRecientes(getVentasRecientes());
-            dashboard.setVentasPorDia(getVentasPorDia());
-            logger.info("Dashboard construido exitosamente");
-            return dashboard;
-        } catch (Exception e) {
-            logger.error("Error al construir datos del dashboard: ", e);
-            throw new RuntimeException("Error al cargar datos del dashboard", e);
+            logger.error("❌ ERROR DE CONEXIÓN A BASE DE DATOS: ", e);
         }
     }
 }
