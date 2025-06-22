@@ -21,9 +21,27 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
-                // PERMITIR ACCESO SIN AUTENTICACIÓN
+                // PÁGINAS PÚBLICAS
                 .requestMatchers("/", "/login", "/registro", "/css/**", "/js/**", "/images/**", "/error").permitAll()
-                // REQUERIR AUTENTICACIÓN PARA TODO LO DEMÁS
+                
+                // TODOS LOS ROLES PUEDEN VER PRODUCTOS Y CLIENTES
+                .requestMatchers("/api/productos/**").hasAnyRole("VENDEDOR", "ADMINISTRATIVO", "DUEÑO")
+                .requestMatchers("/api/clientes/**").hasAnyRole("VENDEDOR", "ADMINISTRATIVO", "DUEÑO")
+                .requestMatchers("/api/categorias/**").hasAnyRole("VENDEDOR", "ADMINISTRATIVO", "DUEÑO")
+                .requestMatchers("/api/marcas/**").hasAnyRole("VENDEDOR", "ADMINISTRATIVO", "DUEÑO")
+                
+                // VENTAS - TODOS PUEDEN PROCESAR
+                .requestMatchers("/api/ventas/**").hasAnyRole("VENDEDOR", "ADMINISTRATIVO", "DUEÑO")
+                
+                // ADMINISTRACIÓN - SOLO ADMIN Y DUEÑO
+                .requestMatchers("/api/admin/**").hasAnyRole("ADMINISTRATIVO", "DUEÑO")
+                .requestMatchers("/api/inventario/**").hasAnyRole("ADMINISTRATIVO", "DUEÑO")
+                .requestMatchers("/api/proveedores/**").hasAnyRole("ADMINISTRATIVO", "DUEÑO")
+                
+                // DASHBOARDS POR ROL
+                .requestMatchers("/dashboard/**").hasAnyRole("VENDEDOR", "ADMINISTRATIVO", "DUEÑO")
+                
+                // RESTO REQUIERE AUTENTICACIÓN
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -35,7 +53,6 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
             )
-            // DESHABILITAR CSRF PARA SIMPLIFICAR
             .csrf(csrf -> csrf.disable());
 
         return http.build();

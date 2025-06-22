@@ -11,35 +11,20 @@ import java.util.Optional;
 
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
-    
-    // Buscar categoría por nombre
+    List<Categoria> findAllByOrderByNombreAsc();
+    boolean existsByNombre(String nombre);
+    List<Categoria> findByNombreContainingIgnoreCase(String nombre);
     Optional<Categoria> findByNombre(String nombre);
     
-    // Buscar categorías por nombre (contiene)
-    List<Categoria> findByNombreContainingIgnoreCase(String nombre);
+    @Query("SELECT COUNT(p) FROM Producto p WHERE p.categoria.idCategoria = :id AND p.activo = true")
+    Long countByCategoriaIdCategoriaAndActivoTrue(@Param("id") Long id);
     
-    // Verificar si existe una categoría con ese nombre
-    boolean existsByNombre(String nombre);
-    
-    // Buscar categorías ordenadas por nombre
-    List<Categoria> findAllByOrderByNombreAsc();
-    
-    // Contar productos por categoría
-    @Query("SELECT c.nombre, COUNT(p) FROM Categoria c LEFT JOIN Producto p ON c.idCategoria = p.categoria.idCategoria " +
-           "WHERE p.activo = true GROUP BY c.idCategoria, c.nombre ORDER BY COUNT(p) DESC")
-    List<Object[]> countProductosPorCategoria();
-    
-    // Obtener categorías con productos activos
-    @Query("SELECT DISTINCT c FROM Categoria c JOIN Producto p ON c.idCategoria = p.categoria.idCategoria " +
-           "WHERE p.activo = true ORDER BY c.nombre")
+    @Query("SELECT c FROM Categoria c WHERE EXISTS (SELECT p FROM Producto p WHERE p.categoria = c AND p.activo = true)")
     List<Categoria> findCategoriasConProductosActivos();
     
-    // Buscar categorías sin productos
-    @Query("SELECT c FROM Categoria c WHERE c.idCategoria NOT IN " +
-           "(SELECT DISTINCT p.categoria.idCategoria FROM Producto p WHERE p.activo = true)")
+    @Query("SELECT c.nombre, COUNT(p) FROM Categoria c LEFT JOIN Producto p ON p.categoria = c GROUP BY c.nombre")
+    List<Object[]> countProductosPorCategoria();
+    
+    @Query("SELECT c FROM Categoria c WHERE NOT EXISTS (SELECT p FROM Producto p WHERE p.categoria = c)")
     List<Categoria> findCategoriasSinProductos();
-
-    // Contar productos activos por categoría
-    @Query("SELECT COUNT(p) FROM Producto p WHERE p.categoria.idCategoria = :categoriaId AND p.activo = true")
-    Long countByCategoriaIdCategoriaAndActivoTrue(@Param("categoriaId") Long categoriaId);
 }

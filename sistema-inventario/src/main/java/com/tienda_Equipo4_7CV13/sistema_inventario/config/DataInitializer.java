@@ -1,12 +1,9 @@
 package com.tienda_Equipo4_7CV13.sistema_inventario.config;
 
-import com.tienda_Equipo4_7CV13.sistema_inventario.entity.Usuario;
-import com.tienda_Equipo4_7CV13.sistema_inventario.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -16,12 +13,6 @@ import java.sql.Connection;
 public class DataInitializer implements CommandLineRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-    
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private DataSource dataSource;

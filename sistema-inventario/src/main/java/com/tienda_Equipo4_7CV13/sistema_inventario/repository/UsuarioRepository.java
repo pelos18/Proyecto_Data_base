@@ -11,30 +11,14 @@ import java.util.Optional;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-   
-   // Buscar usuario por nombre de usuario
-   Optional<Usuario> findByUsuario(String usuario);
-   
-   // Buscar usuario por nombre de usuario y que esté activo
-   Optional<Usuario> findByUsuarioAndActivoTrue(String usuario);
-   
-   // Buscar usuarios por rol
-   List<Usuario> findByRol(String rol);
-   
-   // Buscar usuarios activos
-   List<Usuario> findByActivoTrue();
-   
-   // Buscar usuarios por rol y activos
-   List<Usuario> findByRolAndActivoTrue(String rol);
-   
-   // Verificar si existe un usuario con ese nombre
-   boolean existsByUsuario(String usuario);
-   
-   // Buscar usuarios por nombre (contiene)
-   @Query("SELECT u FROM Usuario u WHERE LOWER(u.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))")
-   List<Usuario> findByNombreContainingIgnoreCase(@Param("nombre") String nombre);
-   
-   // Contar usuarios por rol
-   @Query("SELECT COUNT(u) FROM Usuario u WHERE u.rol = :rol AND u.activo = true")
-   Long countByRolAndActivoTrue(@Param("rol") String rol);
+    Optional<Usuario> findByUsuario(String usuario);
+    boolean existsByUsuario(String usuario);
+    
+    Optional<Usuario> findByUsuarioAndActivoTrue(String usuario);
+    List<Usuario> findByRolAndActivoTrue(String rol);
+    List<Usuario> findByActivoTrue();
+    List<Usuario> findByNombreContainingIgnoreCase(String nombre);
+    
+    @Query("SELECT COUNT(u) FROM Usuario u WHERE u.rol = :rol AND u.activo = true")
+    Long countByRolAndActivoTrue(@Param("rol") String rol);
 }

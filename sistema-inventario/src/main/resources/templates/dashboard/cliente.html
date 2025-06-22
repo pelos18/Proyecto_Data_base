@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Cliente - Sistema de Inventario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-shopping-cart me-2"></i>Tienda Online
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="fas fa-user me-1"></i>
+                    Bienvenido, <span th:text="${usuario.nombre}"></span>
+                </span>
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Header Cliente -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1><i class="fas fa-store me-2"></i>Catálogo de Productos</h1>
+                <p class="lead">Explora nuestros productos y ofertas especiales</p>
+            </div>
+        </div>
+
+        <!-- Carrito flotante -->
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;">
+            <button class="btn btn-primary btn-lg rounded-circle" data-bs-toggle="modal" data-bs-target="#carritoModal">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="carritoCount">
+                    0
+                </span>
+            </button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Buscar productos..." id="buscarProducto">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="filtroCategoria">
+                    <option value="">Todas las categorías</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="filtroMarca">
+                    <option value="">Todas las marcas</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-primary w-100" onclick="buscarProductos()">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+        </div>
+
+        <!-- Productos -->
+        <div class="row" id="productosContainer">
+            <!-- Los productos se cargarán aquí dinámicamente -->
+        </div>
+
+        <!-- Ofertas especiales -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3><i class="fas fa-fire me-2 text-danger"></i>Ofertas Especiales</h3>
+            </div>
+        </div>
+        <div class="row" id="ofertasContainer">
+            <!-- Las ofertas se cargarán aquí -->
+        </div>
+    </div>
+
+    <!-- Modal Carrito -->
+    <div class="modal fade" id="carritoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-shopping-cart me-2"></i>Mi Carrito
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="carritoBody">
+                    <!-- Contenido del carrito -->
+                </div>
+                <div class="modal-footer">
+                    <div class="me-auto">
+                        <strong>Total: $<span id="totalCarrito">0.00</span></strong>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" onclick="procesarCompra()">
+                        <i class="fas fa-credit-card me-1"></i>Procesar Compra
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let carrito = [];
+        
+        // Cargar productos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarProductos();
+            cargarCategorias();
+            cargarMarcas();
+        });
+        
+        function cargarProductos() {
+            fetch('/api/productos/disponibles')
+                .then(response => response.json())
+                .then(productos => {
+                    mostrarProductos(productos);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        
+        function mostrarProductos(productos) {
+            const container = document.getElementById('productosContainer');
+            container.innerHTML = '';
+            
+            productos.forEach(producto => {
+                const card = `
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">${producto.nombre}</h5>
+                                <p class="card-text">${producto.descripcion || ''}</p>
+                                <p class="text-muted">Stock: ${producto.stockActual}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 text-success">$${producto.precio}</span>
+                                    <button class="btn btn-primary" onclick="agregarAlCarrito(${producto.idProducto}, '${producto.nombre}', ${producto.precio})">
+                                        <i class="fas fa-cart-plus"></i> Agregar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+        
+        function agregarAlCarrito(id, nombre, precio) {
+            const item = carrito.find(item => item.id === id);
+            if (item) {
+                item.cantidad++;
+            } else {
+                carrito.push({id, nombre, precio, cantidad: 1});
+            }
+            actualizarCarrito();
+        }
+        
+        function actualizarCarrito() {
+            document.getElementById('carritoCount').textContent = carrito.length;
+            
+            const carritoBody = document.getElementById('carritoBody');
+            carritoBody.innerHTML = '';
+            
+            let total = 0;
+            carrito.forEach((item, index) => {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                
+                carritoBody.innerHTML += `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>${item.nombre}</strong><br>
+                            $${item.precio} x ${item.cantidad}
+                        </div>
+                        <div>
+                            <span class="me-2">$${subtotal.toFixed(2)}</span>
+                            <button class="btn btn-sm btn-danger" onclick="eliminarDelCarrito(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('totalCarrito').textContent = total.toFixed(2);
+        }
+        
+        function eliminarDelCarrito(index) {
+            carrito.splice(index, 1);
+            actualizarCarrito();
+        }
+        
+        function procesarCompra() {
+            if (carrito.length === 0) {
+                alert('El carrito está vacío');
+                return;
+            }
+            
+            // Enviar compra al servidor
+            fetch('/api/ventas/procesar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    items: carrito
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('¡Compra procesada exitosamente!');
+                    carrito = [];
+                    actualizarCarrito();
+                    document.querySelector('[data-bs-dismiss="modal"]').click();
+                } else {
+                    alert('Error al procesar la compra: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al procesar la compra');
+            });
+        }
+    </script>
+</body>
+</html>

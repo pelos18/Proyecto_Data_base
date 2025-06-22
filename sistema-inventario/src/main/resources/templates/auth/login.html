@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - Sistema de Inventario</title>
+    <title>Sistema de Inventario</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -19,21 +19,33 @@
             border-radius: 15px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
+        .registro-option {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .registro-option:hover {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-4">
+            <div class="col-md-8 col-lg-6">
                 <div class="card login-card">
                     <div class="card-header bg-primary text-white text-center py-4">
                         <h3><i class="fas fa-store me-2"></i>Sistema de Inventario</h3>
-                        <p class="mb-0">Bienvenido de vuelta</p>
+                        <p class="mb-0">Bienvenido al sistema</p>
                     </div>
                     <div class="card-body p-4">
-                        <!-- Mensajes de éxito/error -->
+                        <!-- Mensajes -->
                         <div th:if="${param.success}" class="alert alert-success">
-                            <i class="fas fa-check-circle me-2"></i>Registro exitoso. Puedes iniciar sesión.
+                            <i class="fas fa-check-circle me-2"></i>¡Registro exitoso! Puedes iniciar sesión.
                         </div>
                         <div th:if="${param.error}" class="alert alert-danger">
                             <i class="fas fa-exclamation-triangle me-2"></i>Usuario o contraseña incorrectos.
@@ -42,47 +54,59 @@
                             <i class="fas fa-info-circle me-2"></i>Has cerrado sesión exitosamente.
                         </div>
                         
-                        <form th:action="@{/login}" method="post">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">
-                                    <i class="fas fa-user me-1"></i>Usuario
-                                </label>
-                                <input type="text" class="form-control form-control-lg" 
-                                       id="username" name="username" required 
-                                       placeholder="Ingresa tu usuario">
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="password" class="form-label">
-                                    <i class="fas fa-lock me-1"></i>Contraseña
-                                </label>
-                                <input type="password" class="form-control form-control-lg" 
-                                       id="password" name="password" required 
-                                       placeholder="Ingresa tu contraseña">
-                            </div>
-                            
-                            <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
-                                </button>
-                            </div>
-                        </form>
+                        <!-- Login para empleados -->
+                        <div class="mb-4">
+                            <h5><i class="fas fa-users me-2"></i>Acceso para Empleados</h5>
+                            <form th:action="@{/login}" method="post">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">
+                                        <i class="fas fa-user me-1"></i>Usuario
+                                    </label>
+                                    <input type="text" class="form-control" 
+                                           id="username" name="username" required 
+                                           placeholder="Ingresa tu usuario">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">
+                                        <i class="fas fa-lock me-1"></i>Contraseña
+                                    </label>
+                                    <input type="password" class="form-control" 
+                                           id="password" name="password" required 
+                                           placeholder="Ingresa tu contraseña">
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                         
                         <hr>
                         
+                        <!-- Opciones de registro -->
                         <div class="text-center">
-                            <p class="text-muted mb-2">¿No tienes cuenta?</p>
-                            <!-- CORREGIR EL ENLACE DE REGISTRO -->
-                            <a href="/registro" class="btn btn-outline-success">
-                                <i class="fas fa-user-plus me-2"></i>Registrarse
-                            </a>
-                        </div>
-                        
-                        <div class="mt-4 p-3 bg-light rounded">
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle me-1"></i>
-                                <strong>Usuario de prueba:</strong> admin / admin
-                            </small>
+                            <h5 class="mb-3">¿No tienes cuenta?</h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="registro-option" onclick="window.location.href='/registro-empleado'">
+                                        <i class="fas fa-user-tie fa-2x text-primary mb-2"></i>
+                                        <h6>Registro de Empleado</h6>
+                                        <small class="text-muted">Para dueño, administrativo o vendedor</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="registro-option" onclick="window.location.href='/registro-cliente'">
+                                        <i class="fas fa-user-plus fa-2x text-success mb-2"></i>
+                                        <h6>Registro de Cliente</h6>
+                                        <small class="text-muted">Para clientes de la tienda</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

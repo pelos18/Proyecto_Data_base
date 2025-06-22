@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Cajero - Sistema de Inventario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-warning">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cash-register me-2"></i>Caja Registradora
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3 text-dark">
+                    <i class="fas fa-user me-1"></i>
+                    Cajero: <span th:text="${usuario.nombre}"></span>
+                </span>
+                <a class="nav-link text-dark" href="/logout">
+                    <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <!-- Panel de Venta -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4><i class="fas fa-shopping-cart me-2"></i>Nueva Venta</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Búsqueda de productos -->
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <input type="text" class="form-control form-control-lg" 
+                                       placeholder="Buscar producto por nombre o código de barras..." 
+                                       id="buscarProductoCajero">
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary btn-lg w-100" onclick="buscarProductoCajero()">
+                                    <i class="fas fa-search"></i> Buscar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Resultados de búsqueda -->
+                        <div id="resultadosBusqueda" class="mb-3"></div>
+
+                        <!-- Lista de productos en venta -->
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Precio</th>
+                                        <th>Cantidad</th>
+                                        <th>Subtotal</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productosVenta">
+                                    <!-- Productos de la venta actual -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Total y Acciones -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4><i class="fas fa-calculator me-2"></i>Total de Venta</h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2 class="display-4 text-success">$<span id="totalVenta">0.00</span></h2>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Cliente (opcional)</label>
+                            <select class="form-select" id="clienteSelect">
+                                <option value="">Cliente general</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-success btn-lg" onclick="procesarVenta()">
+                                <i class="fas fa-credit-card me-2"></i>Procesar Venta
+                            </button>
+                            <button class="btn btn-warning" onclick="limpiarVenta()">
+                                <i class="fas fa-broom me-2"></i>Limpiar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel de Acciones Rápidas -->
+                <div class="card mt-3">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="fas fa-tools me-2"></i>Acciones Rápidas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary" onclick="buscarVentaAnterior()">
+                                <i class="fas fa-search me-2"></i>Buscar Venta
+                            </button>
+                            <button class="btn btn-outline-warning" onclick="procesarDevolucion()">
+                                <i class="fas fa-undo me-2"></i>Devolución
+                            </button>
+                            <button class="btn btn-outline-info" onclick="verReporteDiario()">
+                                <i class="fas fa-chart-line me-2"></i>Reporte Diario
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Buscar Venta -->
+    <div class="modal fade" id="buscarVentaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Buscar Venta Anterior</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control mb-3" placeholder="ID de venta..." id="buscarVentaId">
+                    <div id="resultadoVenta"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let ventaActual = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarClientes();
+        });
+        
+        function buscarProductoCajero() {
+            const termino = document.getElementById('buscarProductoCajero').value;
+            if (!termino) return;
+            
+            fetch(`/api/productos/buscar?q=${encodeURIComponent(termino)}`)
+                .then(response => response.json())
+                .then(productos => {
+                    mostrarResultadosBusqueda(productos);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        
+        function mostrarResultadosBusqueda(productos) {
+            const container = document.getElementById('resultadosBusqueda');
+            container.innerHTML = '';
+            
+            if (productos.length === 0) {
+                container.innerHTML = '<div class="alert alert-warning">No se encontraron productos</div>';
+                return;
+            }
+            
+            productos.forEach(producto => {
+                container.innerHTML += `
+                    <div class="card mb-2">
+                        <div class="card-body py-2">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <strong>${producto.nombre}</strong><br>
+                                    <small class="text-muted">${producto.codigoBarras}</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="h6 text-success">$${producto.precio}</span><br>
+                                    <small>Stock: ${producto.stockActual}</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-primary btn-sm w-100" 
+                                            onclick="agregarAVenta(${producto.idProducto}, '${producto.nombre}', ${producto.precio}, ${producto.stockActual})">
+                                        <i class="fas fa-plus"></i> Agregar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function agregarAVenta(id, nombre, precio, stock) {
+            const item = ventaActual.find(item => item.id === id);
+            if (item) {
+                if (item.cantidad < stock) {
+                    item.cantidad++;
+                } else {
+                    alert('No hay suficiente stock');
+                    return;
+                }
+            } else {
+                ventaActual.push({id, nombre, precio, cantidad: 1, stock});
+            }
+            actualizarVenta();
+            document.getElementById('buscarProductoCajero').value = '';
+            document.getElementById('resultadosBusqueda').innerHTML = '';
+        }
+        
+        function actualizarVenta() {
+            const tbody = document.getElementById('productosVenta');
+            tbody.innerHTML = '';
+            
+            let total = 0;
+            ventaActual.forEach((item, index) => {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.nombre}</td>
+                        <td>$${item.precio.toFixed(2)}</td>
+                        <td>
+                            <div class="input-group input-group-sm" style="width: 120px;">
+                                <button class="btn btn-outline-secondary" onclick="cambiarCantidad(${index}, -1)">-</button>
+                                <input type="number" class="form-control text-center" value="${item.cantidad}" readonly>
+                                <button class="btn btn-outline-secondary" onclick="cambiarCantidad(${index}, 1)">+</button>
+                            </div>
+                        </td>
+                        <td>$${subtotal.toFixed(2)}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarDeVenta(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('totalVenta').textContent = total.toFixed(2);
+        }
+        
+        function cambiarCantidad(index, cambio) {
+            const item = ventaActual[index];
+            const nuevaCantidad = item.cantidad + cambio;
+            
+            if (nuevaCantidad <= 0) {
+                eliminarDeVenta(index);
+            } else if (nuevaCantidad <= item.stock) {
+                item.cantidad = nuevaCantidad;
+                actualizarVenta();
+            } else {
+                alert('No hay suficiente stock');
+            }
+        }
+        
+        function eliminarDeVenta(index) {
+            ventaActual.splice(index, 1);
+            actualizarVenta();
+        }
+        
+        function procesarVenta() {
+            if (ventaActual.length === 0) {
+                alert('No hay productos en la venta');
+                return;
+            }
+            
+            const clienteId = document.getElementById('clienteSelect').value || null;
+            
+            fetch('/api/ventas/procesar-cajero', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    items: ventaActual,
+                    clienteId: clienteId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`¡Venta procesada exitosamente! ID: ${data.ventaId}`);
+                    limpiarVenta();
+                } else {
+                    alert('Error al procesar la venta: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al procesar la venta');
+            });
+        }
+        
+        function limpiarVenta() {
+            ventaActual = [];
+            actualizarVenta();
+            document.getElementById('clienteSelect').value = '';
+        }
+        
+        function cargarClientes() {
+            fetch('/api/clientes/activos')
+                .then(response => response.json())
+                .then(clientes => {
+                    const select = document.getElementById('clienteSelect');
+                    clientes.forEach(cliente => {
+                        select.innerHTML += `<option value="${cliente.idCliente}">${cliente.nombre}</option>`;
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        
+        // Permitir buscar con Enter
+        document.getElementById('buscarProductoCajero').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarProductoCajero();
+            }
+        });
+    </script>
+</body>
+</html>

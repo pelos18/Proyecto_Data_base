@@ -6,67 +6,62 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface LoteInventarioRepository extends JpaRepository<LoteInventario, Long> {
     
-    // Buscar lotes por producto
-    List<LoteInventario> findByProductoIdProducto(Long idProducto);
+    List<LoteInventario> findByProductoIdProducto(Long productoId);
     
-    // Buscar lotes por proveedor
     List<LoteInventario> findByProveedorIdProveedor(Long idProveedor);
     
-    // Buscar lotes con stock disponible
-    List<LoteInventario> findByCantidadGreaterThan(Integer cantidad);
+    List<LoteInventario> findByCantidadGreaterThan(int cantidad);
     
-    // Buscar lotes por producto con stock disponible
-    List<LoteInventario> findByProductoIdProductoAndCantidadGreaterThan(Long idProducto, Integer cantidad);
+    List<LoteInventario> findByProductoIdProductoAndCantidadGreaterThan(Long idProducto, int cantidad);
     
-    // Lotes próximos a caducar
-    @Query("SELECT l FROM LoteInventario l WHERE l.fechaCaducidad IS NOT NULL AND " +
-           "l.fechaCaducidad BETWEEN :fechaActual AND :fechaLimite AND l.cantidad > 0")
-    List<LoteInventario> findLotesProximosACaducar(@Param("fechaActual") LocalDate fechaActual, 
-                                                  @Param("fechaLimite") LocalDate fechaLimite);
+    @Query("SELECT l.precioVenta FROM LoteInventario l WHERE l.producto.idProducto = :productoId AND l.cantidad > 0 ORDER BY l.fechaIngreso DESC")
+    List<Double> findPrecioVentaByProductoIdList(@Param("productoId") Long productoId);
     
-    // Lotes caducados
-    @Query("SELECT l FROM LoteInventario l WHERE l.fechaCaducidad IS NOT NULL AND " +
-           "l.fechaCaducidad < :fechaActual AND l.cantidad > 0")
-    List<LoteInventario> findLotesCaducados(@Param("fechaActual") LocalDate fechaActual);
+    default Double findPrecioVentaByProductoId(Long productoId) {
+        List<Double> precios = findPrecioVentaByProductoIdList(productoId);
+        return precios.isEmpty() ? null : precios.get(0);
+    }
     
-    // Lotes por rango de fechas de ingreso
-    @Query("SELECT l FROM LoteInventario l WHERE l.fechaIngreso BETWEEN :fechaInicio AND :fechaFin")
-    List<LoteInventario> findLotesPorRangoFechaIngreso(@Param("fechaInicio") LocalDate fechaInicio, 
-                                                      @Param("fechaFin") LocalDate fechaFin);
+    @Query("SELECT l FROM LoteInventario l WHERE l.fechaCaducidad BETWEEN :fechaActual AND :fechaLimite AND l.cantidad > 0")
+    List<LoteInventario> findLotesProximosACaducar(@Param("fechaActual") LocalDate fechaActual, @Param("fechaLimite") LocalDate fechaLimite);
     
-    // Obtener stock total por producto
-    @Query("SELECT l.producto.idProducto, SUM(l.cantidad) FROM LoteInventario l " +
-           "WHERE l.cantidad > 0 GROUP BY l.producto.idProducto")
-    List<Object[]> getStockTotalPorProducto();
+    @Query("SELECT l FROM LoteInventario l WHERE l.fechaCaducidad <= :fecha AND l.cantidad > 0")
+    List<LoteInventario> findLotesCaducados(@Param("fecha") LocalDate fecha);
     
-    // Lotes con mayor rotación (más vendidos)
-    @Query("SELECT l, COUNT(dv) as ventasCount FROM LoteInventario l " +
-           "LEFT JOIN DetalleVenta dv ON l.idLote = dv.lote.idLote " +
-           "GROUP BY l.idLote ORDER BY ventasCount DESC")
-    List<Object[]> findLotesConMayorRotacion();
+    @Query("SELECT l FROM LoteInventario l WHERE l.fechaCaducidad <= :fecha AND l.cantidad > 0")
+    List<LoteInventario> findLotesProximosAVencer(@Param("fecha") LocalDate fecha);
     
-    // Valor total del inventario
-    @Query("SELECT SUM(l.cantidad * l.precioCompra) FROM LoteInventario l WHERE l.cantidad > 0")
-    java.math.BigDecimal getValorTotalInventario();
+    @Query("SELECT COUNT(l) FROM LoteInventario l WHERE l.cantidad > 0")
+    Long countLotesActivos();
     
-    // Lotes por producto ordenados por fecha de caducidad
-    @Query("SELECT l FROM LoteInventario l WHERE l.producto.idProducto = :idProducto AND l.cantidad > 0 " +
-           "ORDER BY l.fechaCaducidad ASC NULLS LAST")
+    @Query("SELECT COUNT(l) FROM LoteInventario l WHERE l.fechaCaducidad <= :fecha AND l.cantidad > 0")
+    Long countLotesProximosAVencer(@Param("fecha") LocalDate fecha);
+    
+    @Query("SELECT l FROM LoteInventario l GROUP BY l.producto")
+    List<LoteInventario> getStockTotalPorProducto();
+    
+    @Query("SELECT COALESCE(SUM(l.cantidad * l.precioCompra), 0) FROM LoteInventario l WHERE l.cantidad > 0")
+    BigDecimal getValorTotalInventario();
+    
+    @Query("SELECT l FROM LoteInventario l WHERE l.producto.idProducto = :idProducto ORDER BY l.fechaCaducidad ASC")
     List<LoteInventario> findLotesPorProductoOrdenadosPorCaducidad(@Param("idProducto") Long idProducto);
     
-    // Lotes sin movimiento (sin ventas)
-    @Query("SELECT l FROM LoteInventario l WHERE l.idLote NOT IN " +
-           "(SELECT DISTINCT dv.lote.idLote FROM DetalleVenta dv) AND l.cantidad > 0")
+    @Query("SELECT l FROM LoteInventario l WHERE l.cantidad > 0")
     List<LoteInventario> findLotesSinMovimiento();
     
-    // Buscar lotes por rango de precios
+    @Query("SELECT l FROM LoteInventario l WHERE l.cantidad > 0 ORDER BY l.cantidad DESC")
+    List<LoteInventario> findLotesConMayorRotacion();
+    
+    @Query("SELECT l FROM LoteInventario l WHERE l.fechaIngreso BETWEEN :fechaInicio AND :fechaFin")
+    List<LoteInventario> findLotesPorRangoFechaIngreso(@Param("fechaInicio") LocalDate fechaInicio, @Param("fechaFin") LocalDate fechaFin);
+    
     @Query("SELECT l FROM LoteInventario l WHERE l.precioVenta BETWEEN :precioMinimo AND :precioMaximo")
-    List<LoteInventario> findLotesPorRangoPrecios(@Param("precioMinimo") java.math.BigDecimal precioMinimo, 
-                                                 @Param("precioMaximo") java.math.BigDecimal precioMaximo);
+    List<LoteInventario> findLotesPorRangoPrecios(@Param("precioMinimo") BigDecimal precioMinimo, @Param("precioMaximo") BigDecimal precioMaximo);
 }

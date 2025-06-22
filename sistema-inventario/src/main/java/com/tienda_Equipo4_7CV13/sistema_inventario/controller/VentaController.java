@@ -1,103 +1,128 @@
 package com.tienda_Equipo4_7CV13.sistema_inventario.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import com.tienda_Equipo4_7CV13.sistema_inventario.entity.Venta;
 import com.tienda_Equipo4_7CV13.sistema_inventario.service.VentaService;
-import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.time.LocalDate;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/ventas")
+@Controller
+@RequestMapping("/ventas")
 public class VentaController {
-    
+
     @Autowired
     private VentaService ventaService;
-    
+
     @GetMapping
-    public ResponseEntity<List<Venta>> getAllVentas() {
+    public String listarVentas(Model model) {
         try {
             List<Venta> ventas = ventaService.findAll();
-            return ResponseEntity.ok(ventas);
+            model.addAttribute("ventas", ventas);
+            return "ventas/lista";
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            model.addAttribute("error", "Error al cargar ventas: " + e.getMessage());
+            return "ventas/lista";
         }
     }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Venta> getVentaById(@PathVariable Long id) {
+
+    @GetMapping("/nueva")
+    public String nuevaVentaForm(Model model) {
+        model.addAttribute("venta", new Venta());
+        return "ventas/formulario";
+    }
+
+    @PostMapping("/guardar")
+    public String guardarVenta(@ModelAttribute Venta venta, 
+                             RedirectAttributes redirectAttributes) {
+        try {
+            ventaService.save(venta);
+            redirectAttributes.addFlashAttribute("success", "Venta guardada exitosamente");
+            return "redirect:/ventas";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al guardar venta: " + e.getMessage());
+            return "redirect:/ventas/nueva";
+        }
+    }
+
+    @GetMapping("/editar/{id}")
+    public String editarVentaForm(@PathVariable Long id, Model model) {
         try {
             Venta venta = ventaService.findById(id);
-            return venta != null ? ResponseEntity.ok(venta) : ResponseEntity.notFound().build();
+            model.addAttribute("venta", venta);
+            return "ventas/formulario";
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            model.addAttribute("error", "Venta no encontrada");
+            return "redirect:/ventas";
         }
     }
-    
-    @PostMapping
-    public ResponseEntity<Venta> createVenta(@Valid @RequestBody Venta venta) {
-        try {
-            Venta nuevaVenta = ventaService.save(venta);
-            return ResponseEntity.ok(nuevaVenta);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-    
-    @PutMapping("/{id}")
-    public ResponseEntity<Venta> updateVenta(@PathVariable Long id, @Valid @RequestBody Venta venta) {
-        try {
-            venta.setIdVenta(id);
-            Venta ventaActualizada = ventaService.save(venta);
-            return ResponseEntity.ok(ventaActualizada);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-    
+
     @GetMapping("/hoy")
-    public ResponseEntity<List<Venta>> getVentasHoy() {
+    public String ventasHoy(Model model) {
         try {
             List<Venta> ventas = ventaService.findVentasByFecha(LocalDate.now());
-            return ResponseEntity.ok(ventas);
+            model.addAttribute("ventas", ventas);
+            model.addAttribute("fecha", LocalDate.now());
+            return "ventas/lista";
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            model.addAttribute("error", "Error al cargar ventas de hoy: " + e.getMessage());
+            return "ventas/lista";
         }
     }
-    
-    @GetMapping("/por-fecha")
-    public ResponseEntity<List<Venta>> getVentasPorFecha(
-            @RequestParam String fechaInicio, 
-            @RequestParam String fechaFin) {
+
+    @GetMapping("/rango")
+    public String ventasPorRango(@RequestParam LocalDate inicio, 
+                               @RequestParam LocalDate fin, 
+                               Model model) {
         try {
-            LocalDate inicio = LocalDate.parse(fechaInicio);
-            LocalDate fin = LocalDate.parse(fechaFin);
             List<Venta> ventas = ventaService.findVentasByRangoFecha(inicio, fin);
-            return ResponseEntity.ok(ventas);
+            model.addAttribute("ventas", ventas);
+            model.addAttribute("fechaInicio", inicio);
+            model.addAttribute("fechaFin", fin);
+            return "ventas/lista";
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            model.addAttribute("error", "Error al cargar ventas: " + e.getMessage());
+            return "ventas/lista";
         }
     }
-    
-    @PostMapping("/{id}/confirmar")
-    public ResponseEntity<Venta> confirmarVenta(@PathVariable Long id) {
+
+    @PostMapping("/confirmar/{id}")
+    public String confirmarVenta(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             Venta venta = ventaService.confirmarVenta(id);
-            return ResponseEntity.ok(venta);
+            redirectAttributes.addFlashAttribute("success", "Venta confirmada exitosamente");
+            return "redirect:/ventas";
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            redirectAttributes.addFlashAttribute("error", "Error al confirmar venta: " + e.getMessage());
+            return "redirect:/ventas";
         }
     }
-    
-    @PostMapping("/{id}/cancelar")
-    public ResponseEntity<Venta> cancelarVenta(@PathVariable Long id) {
+
+    @PostMapping("/cancelar/{id}")
+    public String cancelarVenta(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             Venta venta = ventaService.cancelarVenta(id);
-            return ResponseEntity.ok(venta);
+            redirectAttributes.addFlashAttribute("success", "Venta cancelada exitosamente");
+            return "redirect:/ventas";
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            redirectAttributes.addFlashAttribute("error", "Error al cancelar venta: " + e.getMessage());
+            return "redirect:/ventas";
+        }
+    }
+
+    @GetMapping("/detalle/{id}")
+    public String detalleVenta(@PathVariable Long id, Model model) {
+        try {
+            Venta venta = ventaService.findById(id);
+            model.addAttribute("venta", venta);
+            return "ventas/detalle";
+        } catch (Exception e) {
+            model.addAttribute("error", "Venta no encontrada");
+            return "redirect:/ventas";
         }
     }
 }

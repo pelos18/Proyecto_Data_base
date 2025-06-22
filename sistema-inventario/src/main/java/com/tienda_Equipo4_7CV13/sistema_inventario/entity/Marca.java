@@ -1,35 +1,32 @@
 package com.tienda_Equipo4_7CV13.sistema_inventario.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "MARCAS")
-@SequenceGenerator(name = "seq_marcas", sequenceName = "SEQ_MARCAS", allocationSize = 1)
+@Table(name = "marcas")
 public class Marca {
-    
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_marcas")
-    @Column(name = "ID_MARCA")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "marca_seq")
+    @SequenceGenerator(name = "marca_seq", sequenceName = "SEQ_MARCAS", allocationSize = 1)
+    @Column(name = "id_marca")
     private Long idMarca;
-    
-    @NotBlank
-    @Size(max = 100)
-    @Column(name = "NOMBRE", unique = true, nullable = false)
+
+    @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
-    
+
+    @Column(name = "descripcion", length = 200)
+    private String descripcion;
+
     // Constructores
     public Marca() {}
-    
-    public Marca(String nombre) {
-        this.nombre = nombre;
-    }
-    
+
     // Getters y Setters
     public Long getIdMarca() { return idMarca; }
     public void setIdMarca(Long idMarca) { this.idMarca = idMarca; }
-    
+
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 }
