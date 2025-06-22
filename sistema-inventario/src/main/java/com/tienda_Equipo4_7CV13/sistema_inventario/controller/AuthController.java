@@ -30,17 +30,20 @@ public class AuthController {
 
     @GetMapping("/")
     public String inicio() {
+        logger.info("=== ACCESO A RAÍZ ===");
         return "redirect:/login";
     }
 
     @GetMapping("/login")
     public String loginPage() {
+        logger.info("=== ACCESO A LOGIN ===");
         return "auth/login";
     }
 
     // ===== REGISTRO DE EMPLEADOS =====
     @GetMapping("/registro-empleado")
     public String registroEmpleadoPage(Model model) {
+        logger.info("=== ACCESO A REGISTRO EMPLEADO ===");
         model.addAttribute("usuario", new Usuario());
         return "auth/registro-empleado";
     }
@@ -105,6 +108,7 @@ public class AuthController {
     // ===== REGISTRO DE CLIENTES =====
     @GetMapping("/registro-cliente")
     public String registroClientePage(Model model) {
+        logger.info("=== ACCESO A REGISTRO CLIENTE ===");
         model.addAttribute("cliente", new Cliente());
         return "auth/registro-cliente";
     }
@@ -174,6 +178,19 @@ public class AuthController {
         }
         
         return "dashboard/index";
+    }
+
+    // ===== RUTAS DE PRUEBA =====
+    @GetMapping("/test-empleado")
+    public String testEmpleado() {
+        logger.info("=== TEST EMPLEADO FUNCIONANDO ===");
+        return "auth/registro-empleado";
+    }
+
+    @GetMapping("/test-cliente")
+    public String testCliente() {
+        logger.info("=== TEST CLIENTE FUNCIONANDO ===");
+        return "auth/registro-cliente";
     }
 
     // ===== REGISTRO LEGACY (mantener por compatibilidad) =====
