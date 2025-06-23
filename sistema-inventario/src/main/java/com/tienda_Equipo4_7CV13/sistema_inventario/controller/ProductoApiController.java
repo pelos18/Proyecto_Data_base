@@ -1,7 +1,11 @@
 package com.tienda_Equipo4_7CV13.sistema_inventario.controller;
 
-import com.tienda_Equipo4_7CV13.sistema_inventario.entity.*;
-import com.tienda_Equipo4_7CV13.sistema_inventario.repository.*;
+import com.tienda_Equipo4_7CV13.sistema_inventario.entity.Categoria;
+import com.tienda_Equipo4_7CV13.sistema_inventario.entity.Marca;
+import com.tienda_Equipo4_7CV13.sistema_inventario.entity.Producto;
+import com.tienda_Equipo4_7CV13.sistema_inventario.service.CategoriaService;
+import com.tienda_Equipo4_7CV13.sistema_inventario.service.MarcaService;
+import com.tienda_Equipo4_7CV13.sistema_inventario.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,68 +19,106 @@ import java.util.HashMap;
 public class ProductoApiController {
 
     @Autowired
-    private ProductoRepository productoRepository;
-    
+    private ProductoService productoService;
+
     @Autowired
-    private LoteInventarioRepository loteInventarioRepository;
+    private CategoriaService categoriaService;
 
-    @GetMapping("/disponibles")
-    public ResponseEntity<List<Map<String, Object>>> getProductosDisponibles() {
-        try {
-            List<Producto> productos = productoRepository.findByActivoTrue();
-            List<Map<String, Object>> productosConPrecio = productos.stream()
-                .map(producto -> {
-                    Map<String, Object> productoMap = new HashMap<>();
-                    productoMap.put("idProducto", producto.getIdProducto());
-                    productoMap.put("nombre", producto.getNombre());
-                    productoMap.put("descripcion", producto.getDescripcion());
-                    productoMap.put("stockActual", producto.getStockActual());
-                    
-                    // Obtener precio del lote más reciente
-                    Double precio = loteInventarioRepository.findPrecioVentaByProductoId(producto.getIdProducto());
-                    productoMap.put("precio", precio != null ? precio : 0.0);
-                    
-                    return productoMap;
-                })
-                .toList();
-                
-            return ResponseEntity.ok(productosConPrecio);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
+    @Autowired
+    private MarcaService marcaService;
 
-    @GetMapping("/buscar")
-    public ResponseEntity<List<Map<String, Object>>> buscarProductos(@RequestParam String q) {
+    @GetMapping
+    public ResponseEntity<List<Producto>> getAllProductos() {
         try {
-            List<Producto> productos = productoRepository.findByNombreContainingIgnoreCaseOrCodigoBarrasContaining(q, q);
-            List<Map<String, Object>> productosConPrecio = productos.stream()
-                .map(producto -> {
-                    Map<String, Object> productoMap = new HashMap<>();
-                    productoMap.put("idProducto", producto.getIdProducto());
-                    productoMap.put("nombre", producto.getNombre());
-                    productoMap.put("codigoBarras", producto.getCodigoBarras());
-                    productoMap.put("stockActual", producto.getStockActual());
-                    
-                    // Obtener precio del lote más reciente
-                    Double precio = loteInventarioRepository.findPrecioVentaByProductoId(producto.getIdProducto());
-                    productoMap.put("precio", precio != null ? precio : 0.0);
-                    
-                    return productoMap;
-                })
-                .toList();
-                
-            return ResponseEntity.ok(productosConPrecio);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @GetMapping("/admin")
-    public ResponseEntity<List<Producto>> getProductosAdmin() {
-        try {
-            List<Producto> productos = productoRepository.findAll();
+            List<Producto> productos = productoService.findAll();
             return ResponseEntity.ok(productos);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/activos")
+    public ResponseEntity<List<Producto>> getProductosActivos() {
+        try {
+            List<Producto> productos = productoService.findProductosActivos();
+            return ResponseEntity.ok(productos);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
+        try {
+            Producto producto = productoService.findById(id);
+            if (producto != null) {
+                return ResponseEntity.ok(producto);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
+        try {
+            Producto savedProducto = productoService.save(producto);
+            return ResponseEntity.ok(savedProducto);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> updateProducto(@PathVariable Long id, @RequestBody Producto producto) {
+        try {
+            Producto existingProducto = productoService.findById(id);
+            if (existingProducto != null) {
+                producto.setIdProducto(id);
+                Producto updatedProducto = productoService.save(producto);
+                return ResponseEntity.ok(updatedProducto);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
+        try {
+            Producto existingProducto = productoService.findById(id);
+            if (existingProducto != null) {
+                productoService.delete(id);
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/stock-bajo")
+    public ResponseEntity<List<Producto>> getProductosStockBajo() {
+        try {
+            List<Producto> productos = productoService.findProductosConStockBajo();
+            return ResponseEntity.ok(productos);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/estadisticas")
+    public ResponseEntity<Map<String, Object>> getEstadisticas() {
+        try {
+            Map<String, Object> stats = new HashMap<>();
+            stats.put("totalProductos", productoService.countProductosActivos());
+            stats.put("productosStockBajo", productoService.countProductosStockBajo());
+            return ResponseEntity.ok(stats);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

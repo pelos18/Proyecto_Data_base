@@ -86,9 +86,9 @@ public class InventarioController {
             }
 
             // Establecer valores por defecto
-            if (producto.getStockActual() == null) producto.setStockActual(0);
-            if (producto.getStockMinimo() == null) producto.setStockMinimo(5);
-            producto.setActivo(true);
+            if (producto.getStockActual() == null) producto.setStockActual(0L);
+            if (producto.getStockMinimo() == null) producto.setStockMinimo(5L);
+            producto.setActivo(1L);
 
             productoService.save(producto);
             
@@ -239,7 +239,7 @@ public class InventarioController {
 
     @PostMapping("/marcas/guardar")
     public String guardarMarca(@ModelAttribute Marca marca, 
-                               RedirectAttributes redirectAttributes) {
+                             RedirectAttributes redirectAttributes) {
         try {
             marcaService.save(marca);
             redirectAttributes.addFlashAttribute("success", 

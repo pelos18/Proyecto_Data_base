@@ -106,7 +106,7 @@ public class CatalogoController {
         List<Producto> productos = productoRepository.findByNombreContainingIgnoreCaseOrCodigoBarrasContaining(q, q);
         
         return productos.stream()
-            .filter(Producto::getActivo)
+            .filter(producto -> producto.getActivo() != null && producto.getActivo() == 1L)
             .map(producto -> {
                 Double precio = loteInventarioRepository.findPrecioVentaByProductoId(producto.getIdProducto());
                 Map<String, Object> productoMap = new java.util.HashMap<>();
