@@ -2,6 +2,7 @@ package com.tienda_Equipo4_7CV13.sistema_inventario.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Bean
@@ -23,10 +25,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // PÁGINAS PÚBLICAS
                 .requestMatchers("/", "/login", "/registro", "/css/**", "/js/**", "/images/**", "/error").permitAll()
-                // AGREGAR ESTAS LÍNEAS:
                 .requestMatchers("/registro-empleado", "/registro-cliente").permitAll()
                 .requestMatchers("/catalogo-cliente/**").permitAll()
                 .requestMatchers("/test-empleado", "/test-cliente").permitAll()
+                
+                // INVENTARIO - SOLO DUEÑO Y ADMINISTRATIVO
+                .requestMatchers("/inventario/**").hasAnyRole("DUEÑO", "ADMINISTRATIVO")
                 
                 // TODOS LOS ROLES PUEDEN VER PRODUCTOS Y CLIENTES
                 .requestMatchers("/api/productos/**").hasAnyRole("VENDEDOR", "ADMINISTRATIVO", "DUEÑO")
@@ -39,7 +43,6 @@ public class SecurityConfig {
                 
                 // ADMINISTRACIÓN - SOLO ADMIN Y DUEÑO
                 .requestMatchers("/api/admin/**").hasAnyRole("ADMINISTRATIVO", "DUEÑO")
-                .requestMatchers("/api/inventario/**").hasAnyRole("ADMINISTRATIVO", "DUEÑO")
                 .requestMatchers("/api/proveedores/**").hasAnyRole("ADMINISTRATIVO", "DUEÑO")
                 
                 // DASHBOARDS POR ROL
