@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Producto Completo - Sistema Inventario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/dashboard">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/inventario/nuevo-completo">
+                                <i class="fas fa-plus-circle"></i> Crear Producto
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/inventario/agregar-stock">
+                                <i class="fas fa-boxes"></i> Agregar Stock
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-plus-circle"></i> Crear Producto Completo</h1>
+                </div>
+
+                <!-- Mensajes de éxito/error -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Formulario -->
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-box"></i> Información del Producto y Lote</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="/inventario/guardar-completo">
+                            <div class="row">
+                                <!-- DATOS DEL PRODUCTO -->
+                                <div class="col-md-6">
+                                    <h6 class="text-primary mb-3"><i class="fas fa-tag"></i> Datos del Producto</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="productoCodigoBarras" class="form-label">Código de Barras</label>
+                                        <input type="text" class="form-control" id="productoCodigoBarras" 
+                                               name="productoCodigoBarras" th:value="${codigoBarrasGenerado}" readonly>
+                                        <div class="form-text">Generado automáticamente</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="productoNombre" class="form-label">Nombre *</label>
+                                        <input type="text" class="form-control" id="productoNombre" 
+                                               name="productoNombre" required placeholder="Nombre del producto">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="productoDescripcion" class="form-label">Descripción</label>
+                                        <textarea class="form-control" id="productoDescripcion" 
+                                                  name="productoDescripcion" rows="3" placeholder="Descripción del producto"></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="productoStockMinimo" class="form-label">Stock Mínimo *</label>
+                                        <input type="number" class="form-control" id="productoStockMinimo" 
+                                               name="productoStockMinimo" required min="0" value="5">
+                                    </div>
+                                </div>
+
+                                <!-- CATEGORÍA Y MARCA -->
+                                <div class="col-md-6">
+                                    <h6 class="text-success mb-3"><i class="fas fa-list"></i> Categoría y Marca</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="categoriaNombre" class="form-label">Categoría *</label>
+                                        <input type="text" class="form-control" id="categoriaNombre" 
+                                               name="categoriaNombre" required placeholder="Escribir nueva categoría">
+                                        <div class="form-text">Se creará automáticamente si no existe</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="categoriaDescripcion" class="form-label">Descripción de Categoría</label>
+                                        <input type="text" class="form-control" id="categoriaDescripcion" 
+                                               name="categoriaDescripcion" placeholder="Descripción de la categoría">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="marcaNombre" class="form-label">Marca *</label>
+                                        <input type="text" class="form-control" id="marcaNombre" 
+                                               name="marcaNombre" required placeholder="Escribir nueva marca">
+                                        <div class="form-text">Se creará automáticamente si no existe</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="row">
+                                <!-- DATOS DEL PROVEEDOR -->
+                                <div class="col-md-6">
+                                    <h6 class="text-warning mb-3"><i class="fas fa-truck"></i> Datos del Proveedor</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="proveedorNombre" class="form-label">Nombre del Proveedor *</label>
+                                        <input type="text" class="form-control" id="proveedorNombre" 
+                                               name="proveedorNombre" required placeholder="Nombre del proveedor">
+                                        <div class="form-text">Se creará automáticamente si no existe</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="proveedorTelefono" class="form-label">Teléfono</label>
+                                        <input type="text" class="form-control" id="proveedorTelefono" 
+                                               name="proveedorTelefono" placeholder="Teléfono del proveedor">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="proveedorDireccion" class="form-label">Dirección</label>
+                                        <input type="text" class="form-control" id="proveedorDireccion" 
+                                               name="proveedorDireccion" placeholder="Dirección del proveedor">
+                                    </div>
+                                </div>
+
+                                <!-- DATOS DEL LOTE -->
+                                <div class="col-md-6">
+                                    <h6 class="text-info mb-3"><i class="fas fa-warehouse"></i> Datos del Lote</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="loteCantidad" class="form-label">Cantidad *</label>
+                                        <input type="number" class="form-control" id="loteCantidad" 
+                                               name="loteCantidad" required min="1" placeholder="Cantidad de productos">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="lotePrecioCompra" class="form-label">Precio de Compra *</label>
+                                        <input type="number" class="form-control" id="lotePrecioCompra" 
+                                               name="lotePrecioCompra" required min="0" step="0.01" placeholder="0.00">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="lotePrecioVenta" class="form-label">Precio de Venta *</label>
+                                        <input type="number" class="form-control" id="lotePrecioVenta" 
+                                               name="lotePrecioVenta" required min="0" step="0.01" placeholder="0.00">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="loteFechaCaducidad" class="form-label">Fecha de Caducidad</label>
+                                        <input type="date" class="form-control" id="loteFechaCaducidad" 
+                                               name="loteFechaCaducidad">
+                                        <div class="form-text">Opcional</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="/dashboard" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Crear Producto Completo
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

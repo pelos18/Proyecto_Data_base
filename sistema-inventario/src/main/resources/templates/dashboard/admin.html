@@ -32,30 +32,30 @@
           <!-- Sidebar -->
           <div class="col-md-2 bg-light vh-100 p-3">
               <div class="nav flex-column nav-pills">
-                  <button class="nav-link active" onclick="mostrarSeccion('dashboard')">
+                  <a href="/dashboard" class="nav-link active">
                       <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                  </button>
-                  <button class="nav-link" onclick="mostrarSeccion('productos')">
+                  </a>
+                  <a href="/inventario/productos" class="nav-link">
                       <i class="fas fa-box me-2"></i>Productos
-                  </button>
-                  <button class="nav-link" onclick="mostrarSeccion('inventario')">
+                  </a>
+                  <a href="/inventario" class="nav-link">
                       <i class="fas fa-warehouse me-2"></i>Inventario
-                  </button>
-                  <button class="nav-link" onclick="mostrarSeccion('ventas')">
+                  </a>
+                  <a href="/ventas" class="nav-link">
                       <i class="fas fa-chart-line me-2"></i>Ventas
-                  </button>
-                  <button class="nav-link" onclick="mostrarSeccion('clientes')">
+                  </a>
+                  <a href="/clientes" class="nav-link">
                       <i class="fas fa-users me-2"></i>Clientes
-                  </button>
-                  <button class="nav-link" onclick="mostrarSeccion('proveedores')">
+                  </a>
+                  <a href="/proveedores" class="nav-link">
                       <i class="fas fa-truck me-2"></i>Proveedores
-                  </button>
-                  <button class="nav-link" onclick="mostrarSeccion('reportes')">
+                  </a>
+                  <a href="/reportes" class="nav-link">
                       <i class="fas fa-file-alt me-2"></i>Reportes
-                  </button>
-                  <button class="nav-link" onclick="mostrarSeccion('usuarios')">
+                  </a>
+                  <a href="/usuarios" class="nav-link">
                       <i class="fas fa-user-cog me-2"></i>Usuarios
-                  </button>
+                  </a>
               </div>
           </div>
 
@@ -76,6 +76,11 @@
                                           <h2 id="totalProductos">0</h2>
                                       </div>
                                       <i class="fas fa-box fa-2x"></i>
+                                  </div>
+                                  <div class="mt-2">
+                                      <a href="/inventario/nuevo-completo" class="btn btn-light btn-sm">
+                                          <i class="fas fa-plus me-1"></i>Crear Producto
+                                      </a>
                                   </div>
                               </div>
                           </div>
@@ -204,24 +209,6 @@
           inicializarGraficos();
       });
       
-      function mostrarSeccion(seccion) {
-          // Ocultar todas las secciones
-          document.querySelectorAll('.seccion').forEach(s => s.style.display = 'none');
-          
-          // Mostrar la sección seleccionada
-          document.getElementById(`seccion-${seccion}`).style.display = 'block';
-          
-          // Actualizar navegación
-          document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-          event.target.classList.add('active');
-          
-          // Cargar datos específicos de la sección
-          switch(seccion) {
-              case 'productos':
-                  cargarProductos();
-                  break;
-          }
-      }
       
       function cargarDashboard() {
           // Cargar estadísticas generales
