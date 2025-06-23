@@ -21,10 +21,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
-                // PÁGINAS PÚBLICAS - PERMITIR ACCESO SIN AUTENTICACIÓN
-                .requestMatchers("/", "/login", "/registro", "/registro-empleado", "/registro-cliente").permitAll()
+                // PÁGINAS PÚBLICAS
+                .requestMatchers("/", "/login", "/registro", "/css/**", "/js/**", "/images/**", "/error").permitAll()
+                // AGREGAR ESTAS LÍNEAS:
+                .requestMatchers("/registro-empleado", "/registro-cliente").permitAll()
+                .requestMatchers("/catalogo-cliente/**").permitAll()
                 .requestMatchers("/test-empleado", "/test-cliente").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/error").permitAll()
                 
                 // TODOS LOS ROLES PUEDEN VER PRODUCTOS Y CLIENTES
                 .requestMatchers("/api/productos/**").hasAnyRole("VENDEDOR", "ADMINISTRATIVO", "DUEÑO")
@@ -42,7 +44,6 @@ public class SecurityConfig {
                 
                 // DASHBOARDS POR ROL
                 .requestMatchers("/dashboard/**").hasAnyRole("VENDEDOR", "ADMINISTRATIVO", "DUEÑO")
-                .requestMatchers("/vendedor/**").hasAnyRole("VENDEDOR", "ADMINISTRATIVO", "DUEÑO")
                 
                 // RESTO REQUIERE AUTENTICACIÓN
                 .anyRequest().authenticated()

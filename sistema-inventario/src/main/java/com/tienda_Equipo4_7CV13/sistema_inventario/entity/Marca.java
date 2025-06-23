@@ -14,9 +14,6 @@ public class Marca {
     @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
 
-    @Column(name = "descripcion", length = 200)
-    private String descripcion;
-
     // Constructores
     public Marca() {}
 
@@ -26,7 +23,4 @@ public class Marca {
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 }

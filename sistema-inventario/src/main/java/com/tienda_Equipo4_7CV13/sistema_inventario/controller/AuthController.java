@@ -145,9 +145,11 @@ public class AuthController {
             clienteRepository.save(nuevoCliente);
             logger.info("Cliente registrado exitosamente");
 
+            redirectAttributes.addFlashAttribute("clienteId", nuevoCliente.getIdCliente());
+            redirectAttributes.addFlashAttribute("clienteNombre", nuevoCliente.getNombre());
             redirectAttributes.addFlashAttribute("success", 
-                "¡Te has registrado exitosamente como cliente! Tu información ha sido guardada.");
-            return "redirect:/registro-cliente";
+                "¡Registro exitoso! Ahora puedes explorar nuestros productos.");
+            return "redirect:/catalogo-cliente";
 
         } catch (Exception e) {
             logger.error("Error al registrar cliente: ", e);
