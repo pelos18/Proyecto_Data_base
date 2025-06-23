@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Inventario Completo - Sistema de Inventario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-boxes me-2"></i>
+                            Crear Nuevo Inventario Completo
+                        </h3>
+                        <small>Producto + Proveedor + Lote en una sola operación</small>
+                    </div>
+                    
+                    <div class="card-body">
+                        <form th:action="@{/inventario/guardar-completo}" method="post">
+                            
+                            <!-- SECCIÓN PRODUCTO -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="text-primary border-bottom pb-2">
+                                        <i class="fas fa-box me-2"></i>Información del Producto
+                                    </h5>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="productoNombre" class="form-label">
+                                        Nombre del Producto <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="productoNombre" 
+                                           name="productoNombre" required>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="productoCodigoBarras" class="form-label">
+                                        Código de Barras <span class="text-muted">(Automático)</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="productoCodigoBarras" 
+                                           name="productoCodigoBarras" th:value="${codigoBarrasGenerado}" readonly>
+                                </div>
+                                
+                                <div class="col-12 mb-3">
+                                    <label for="productoDescripcion" class="form-label">Descripción</label>
+                                    <textarea class="form-control" id="productoDescripcion" 
+                                              name="productoDescripcion" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="categoriaNombre" class="form-label">
+                                        Categoría <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="categoriaNombre" 
+                                           name="categoriaNombre" placeholder="Ej: Electrónicos" required>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="marcaNombre" class="form-label">
+                                        Marca <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="marcaNombre" 
+                                           name="marcaNombre" placeholder="Ej: Samsung" required>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="productoStockMinimo" class="form-label">
+                                        Stock Mínimo <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="number" class="form-control" id="productoStockMinimo" 
+                                           name="productoStockMinimo" min="0" value="5" required>
+                                </div>
+                                
+                                <div class="col-12 mb-3">
+                                    <label for="categoriaDescripcion" class="form-label">Descripción de Categoría</label>
+                                    <input type="text" class="form-control" id="categoriaDescripcion" 
+                                           name="categoriaDescripcion" placeholder="Descripción opcional de la categoría">
+                                </div>
+                            </div>
+                            
+                            <!-- SECCIÓN PROVEEDOR -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="text-success border-bottom pb-2">
+                                        <i class="fas fa-truck me-2"></i>Información del Proveedor
+                                    </h5>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="proveedorNombre" class="form-label">
+                                        Nombre del Proveedor <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="proveedorNombre" 
+                                           name="proveedorNombre" required>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="proveedorTelefono" class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" id="proveedorTelefono" 
+                                           name="proveedorTelefono">
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="proveedorDireccion" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" id="proveedorDireccion" 
+                                           name="proveedorDireccion">
+                                </div>
+                            </div>
+                            
+                            <!-- SECCIÓN LOTE -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="text-warning border-bottom pb-2">
+                                        <i class="fas fa-warehouse me-2"></i>Información del Lote
+                                    </h5>
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <label for="loteCantidad" class="form-label">
+                                        Cantidad <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="number" class="form-control" id="loteCantidad" 
+                                           name="loteCantidad" min="1" required>
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <label for="lotePrecioCompra" class="form-label">
+                                        Precio de Compra <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="lotePrecioCompra" 
+                                               name="lotePrecioCompra" step="0.01" min="0" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <label for="lotePrecioVenta" class="form-label">
+                                        Precio de Venta <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="lotePrecioVenta" 
+                                               name="lotePrecioVenta" step="0.01" min="0" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <label for="loteFechaCaducidad" class="form-label">
+                                        Fecha de Caducidad <span class="text-muted">(Opcional)</span>
+                                    </label>
+                                    <input type="date" class="form-control" id="loteFechaCaducidad" 
+                                           name="loteFechaCaducidad">
+                                </div>
+                            </div>
+                            
+                            <!-- BOTONES -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between">
+                                        <a href="/dashboard" class="btn btn-secondary">
+                                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                                        </a>
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="fas fa-save me-2"></i>Crear Inventario Completo
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- INFORMACIÓN ADICIONAL -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h6 class="text-muted">
+                            <i class="fas fa-info-circle me-2"></i>Información Importante
+                        </h6>
+                        <ul class="text-muted small mb-0">
+                            <li>Los IDs se generan automáticamente con triggers de Oracle</li>
+                            <li>El stock del producto se actualiza automáticamente</li>
+                            <li>Si la categoría, marca o proveedor no existen, se crearán automáticamente</li>
+                            <li>El código de barras se genera automáticamente con timestamp</li>
+                            <li>Solo usuarios 'dueño' y 'administrativo' pueden establecer precios</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

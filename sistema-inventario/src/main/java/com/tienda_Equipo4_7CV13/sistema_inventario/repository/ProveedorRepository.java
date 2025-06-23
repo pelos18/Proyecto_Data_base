@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ProveedorRepository extends JpaRepository<Proveedor, Long> {
     List<Proveedor> findAllByOrderByNombreAsc();
+    Proveedor findByNombre(String nombre);
 }
