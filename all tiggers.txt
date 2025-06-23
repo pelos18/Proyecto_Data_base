@@ -1,0 +1,520 @@
+
+TRIGGER_NAME                                                                                                                     TRIGGER_TYPE     TABLE_NAME                                                                                                                       TRIGGERING_EVENT                                                                                                                                                                                                                                       STATUS   TRIGGER_BODY                                                                    
+-------------------------------------------------------------------------------------------------------------------------------- ---------------- -------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------- --------------------------------------------------------------------------------
+TRG_USUARIOS_BI                                                                                                                  BEFORE EACH ROW  USUARIOS                                                                                                                         INSERT                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       SELECT SEQ_USUARIOS.NEXTVAL INTO :NEW.id_usuario FROM DUAL;                 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   END;                                                                            
+
+TRG_CLIENTES_BI                                                                                                                  BEFORE EACH ROW  CLIENTES                                                                                                                         INSERT                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       SELECT SEQ_CLIENTES.NEXTVAL INTO :NEW.id_cliente FROM DUAL;                 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   END;                                                                            
+
+TRG_PROVEEDORES_BI                                                                                                               BEFORE EACH ROW  PROVEEDORES                                                                                                                      INSERT                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       SELECT SEQ_PROVEEDORES.NEXTVAL INTO :NEW.id_proveedor FROM DUAL;            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   END;                                                                            
+
+
+TRIGGER_NAME                                                                                                                     TRIGGER_TYPE     TABLE_NAME                                                                                                                       TRIGGERING_EVENT                                                                                                                                                                                                                                       STATUS   TRIGGER_BODY                                                                    
+-------------------------------------------------------------------------------------------------------------------------------- ---------------- -------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------- --------------------------------------------------------------------------------
+TRG_CATEGORIAS_BI                                                                                                                BEFORE EACH ROW  CATEGORIAS                                                                                                                       INSERT                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       SELECT SEQ_CATEGORIAS.NEXTVAL INTO :NEW.id_categoria FROM DUAL;             
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   END;                                                                            
+
+TRG_MARCAS_BI                                                                                                                    BEFORE EACH ROW  MARCAS                                                                                                                           INSERT                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       SELECT SEQ_MARCAS.NEXTVAL INTO :NEW.id_marca FROM DUAL;                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   END;                                                                            
+
+TRG_PRODUCTOS_BI                                                                                                                 BEFORE EACH ROW  PRODUCTOS                                                                                                                        INSERT                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       SELECT SEQ_PRODUCTOS.NEXTVAL INTO :NEW.id_producto FROM DUAL;               
+
+TRIGGER_NAME                                                                                                                     TRIGGER_TYPE     TABLE_NAME                                                                                                                       TRIGGERING_EVENT                                                                                                                                                                                                                                       STATUS   TRIGGER_BODY                                                                    
+-------------------------------------------------------------------------------------------------------------------------------- ---------------- -------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------- --------------------------------------------------------------------------------
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   END;                                                                            
+
+TRG_LOTES_INVENTARIO_BI                                                                                                          BEFORE EACH ROW  LOTES_INVENTARIO                                                                                                                 INSERT                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       SELECT SEQ_LOTES_INVENTARIO.NEXTVAL INTO :NEW.id_lote FROM DUAL;            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   END;                                                                            
+
+TRG_VENTAS_BI                                                                                                                    BEFORE EACH ROW  VENTAS                                                                                                                           INSERT                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       SELECT SEQ_VENTAS.NEXTVAL INTO :NEW.id_venta FROM DUAL;                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   END;                                                                            
+
+TRG_CAJA_BI                                                                                                                      BEFORE EACH ROW  CAJA                                                                                                                             INSERT                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+
+TRIGGER_NAME                                                                                                                     TRIGGER_TYPE     TABLE_NAME                                                                                                                       TRIGGERING_EVENT                                                                                                                                                                                                                                       STATUS   TRIGGER_BODY                                                                    
+-------------------------------------------------------------------------------------------------------------------------------- ---------------- -------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------- --------------------------------------------------------------------------------
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       SELECT SEQ_CAJA.NEXTVAL INTO :NEW.id_caja FROM DUAL;                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   END;                                                                            
+
+TRG_NOTIFICACIONES_BI                                                                                                            BEFORE EACH ROW  NOTIFICACIONES                                                                                                                   INSERT                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       SELECT SEQ_NOTIFICACIONES.NEXTVAL INTO :NEW.id_notificacion FROM DUAL;      
+
+TRG_LOTE_NOTIF_STOCK_BAJO                                                                                                        COMPOUND         LOTES_INVENTARIO                                                                                                                 UPDATE                                                                                                                                                                                                                                                 ENABLED  COMPOUND TRIGGER                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       -- Usamos una colección para guardar los IDs de los product                 
+
+TRG_UPDATE_STOCK_ACTUAL                                                                                                          COMPOUND         LOTES_INVENTARIO                                                                                                                 INSERT OR UPDATE OR DELETE                                                                                                                                                                                                                             ENABLED  COMPOUND TRIGGER                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       TYPE t_id_producto_tab IS TABLE OF LOTES_INVENTARIO.id_prod                 
+
+
+TRIGGER_NAME                                                                                                                     TRIGGER_TYPE     TABLE_NAME                                                                                                                       TRIGGERING_EVENT                                                                                                                                                                                                                                       STATUS   TRIGGER_BODY                                                                    
+-------------------------------------------------------------------------------------------------------------------------------- ---------------- -------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------- --------------------------------------------------------------------------------
+TRG_LOTE_CADUCIDAD                                                                                                               AFTER EACH ROW   LOTES_INVENTARIO                                                                                                                 INSERT OR UPDATE                                                                                                                                                                                                                                       ENABLED  DECLARE                                                                         
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       v_dias_restantes NUMBER;                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       IF :NEW.fecha_caducidad IS NOT NU                                           
+
+TRG_DETALLE_VENTA_LOGICA                                                                                                         COMPOUND         DETALLE_VENTAS                                                                                                                   INSERT OR UPDATE OR DELETE                                                                                                                                                                                                                             ENABLED  COMPOUND TRIGGER                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       -- Colección para guardar los IDs de las ventas afectadas                   
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
+TRG_DETALLE_VENTAS_BI                                                                                                            BEFORE EACH ROW  DETALLE_VENTAS                                                                                                                   INSERT                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+
+TRIGGER_NAME                                                                                                                     TRIGGER_TYPE     TABLE_NAME                                                                                                                       TRIGGERING_EVENT                                                                                                                                                                                                                                       STATUS   TRIGGER_BODY                                                                    
+-------------------------------------------------------------------------------------------------------------------------------- ---------------- -------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------- --------------------------------------------------------------------------------
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       SELECT SEQ_DETALLE_VENTAS.NEXTVAL INTO :NEW.id_detalle FROM DUAL;           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   END;                                                                            
+
+TRG_RESTRICT_PRECIOS                                                                                                             BEFORE EACH ROW  LOTES_INVENTARIO                                                                                                                 INSERT OR UPDATE                                                                                                                                                                                                                                       ENABLED  DECLARE                                                                         
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       v_rol USUARIOS.rol%TYPE;                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       -- Obtener el rol del usuario que                                           
+
+TRG_APERTURA_CAJA_AUTO                                                                                                           BEFORE EACH ROW  VENTAS                                                                                                                           INSERT                                                                                                                                                                                                                                                 ENABLED  DECLARE                                                                         
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       v_caja_count      NUMBER;                                                   
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       v_usuario_activo  NUMBER;                                                   
+
+TRIGGER_NAME                                                                                                                     TRIGGER_TYPE     TABLE_NAME                                                                                                                       TRIGGERING_EVENT                                                                                                                                                                                                                                       STATUS   TRIGGER_BODY                                                                    
+-------------------------------------------------------------------------------------------------------------------------------- ---------------- -------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------- --------------------------------------------------------------------------------
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       --                                                                          
+
+TRG_VENTA_ACEPTADA_CAJA                                                                                                          AFTER EACH ROW   VENTAS                                                                                                                           UPDATE                                                                                                                                                                                                                                                 ENABLED  BEGIN                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       -- Actualiza la caja del usuario en la fecha de la venta, sumando el t      
+
+TRG_VENTA_ANULADA_LOGICA                                                                                                         AFTER EACH ROW   VENTAS                                                                                                                           UPDATE                                                                                                                                                                                                                                                 ENABLED  DECLARE                                                                         
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       -- Cursor para recorrer cada uno de los productos vendidos en esta v        
+
+
+19 filas seleccionadas. 
+
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_USUARIOS_BI" 
+BEFORE INSERT ON USUARIOS
+FOR EACH ROW
+BEGIN
+    SELECT SEQ_USUARIOS.NEXTVAL INTO :NEW.id_usuario FROM DUAL;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_USUARIOS_BI" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_CLIENTES_BI" 
+BEFORE INSERT ON CLIENTES
+FOR EACH ROW
+BEGIN
+    SELECT SEQ_CLIENTES.NEXTVAL INTO :NEW.id_cliente FROM DUAL;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_CLIENTES_BI" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_PROVEEDORES_BI" 
+BEFORE INSERT ON PROVEEDORES
+FOR EACH ROW
+BEGIN
+    SELECT SEQ_PROVEEDORES.NEXTVAL INTO :NEW.id_proveedor FROM DUAL;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_PROVEEDORES_BI" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_CATEGORIAS_BI" 
+BEFORE INSERT ON CATEGORIAS
+FOR EACH ROW
+BEGIN
+    SELECT SEQ_CATEGORIAS.NEXTVAL INTO :NEW.id_categoria FROM DUAL;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_CATEGORIAS_BI" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_MARCAS_BI" 
+BEFORE INSERT ON MARCAS
+FOR EACH ROW
+BEGIN
+    SELECT SEQ_MARCAS.NEXTVAL INTO :NEW.id_marca FROM DUAL;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_MARCAS_BI" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_PRODUCTOS_BI" 
+BEFORE INSERT ON PRODUCTOS
+FOR EACH ROW
+BEGIN
+    SELECT SEQ_PRODUCTOS.NEXTVAL INTO :NEW.id_producto FROM DUAL;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_PRODUCTOS_BI" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_LOTES_INVENTARIO_BI" 
+BEFORE INSERT ON LOTES_INVENTARIO
+FOR EACH ROW
+BEGIN
+    SELECT SEQ_LOTES_INVENTARIO.NEXTVAL INTO :NEW.id_lote FROM DUAL;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_LOTES_INVENTARIO_BI" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_VENTAS_BI" 
+BEFORE INSERT ON VENTAS
+FOR EACH ROW
+BEGIN
+    SELECT SEQ_VENTAS.NEXTVAL INTO :NEW.id_venta FROM DUAL;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_VENTAS_BI" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_CAJA_BI" 
+BEFORE INSERT ON CAJA
+FOR EACH ROW
+BEGIN
+    SELECT SEQ_CAJA.NEXTVAL INTO :NEW.id_caja FROM DUAL;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_CAJA_BI" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_NOTIFICACIONES_BI" 
+BEFORE INSERT ON NOTIFICACIONES
+FOR EACH ROW
+BEGIN
+    SELECT SEQ_NOTIFICACIONES.NEXTVAL INTO :NEW.id_notificacion FROM DUAL;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_NOTIFICACIONES_BI" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_LOTE_NOTIF_STOCK_BAJO" 
+FOR UPDATE OF cantidad ON LOTES_INVENTARIO
+COMPOUND TRIGGER
+    -- Usamos una colección para guardar los IDs de los productos afectados
+    TYPE T_PRODUCTO_ID_TABLE IS TABLE OF LOTES_INVENTARIO.id_producto%TYPE INDEX
+ BY PLS_INTEGER;
+    g_affected_products T_PRODUCTO_ID_TABLE;
+
+    -- Se ejecuta por cada fila que cambia. Solo guarda el ID del producto.
+    AFTER EACH ROW IS
+    BEGIN
+        -- Si el stock se redujo, guardamos el ID del producto para revisarlo de
+spués
+        IF :NEW.cantidad < :OLD.cantidad THEN
+            g_affected_products(:NEW.id_producto) := :NEW.id_producto;
+        END IF;
+    END AFTER EACH ROW;
+
+    -- Se ejecuta al final de la sentencia, cuando la tabla ya no está "mutando"
+
+    AFTER STATEMENT IS
+        v_stock_actual NUMBER;
+        v_stock_minimo PRODUCTOS.stock_minimo%TYPE;
+        v_producto_id  PRODUCTOS.id_producto%TYPE;
+    BEGIN
+        -- Recorremos la lista de productos afectados que guardamos
+        v_producto_id := g_affected_products.FIRST;
+        WHILE v_producto_id IS NOT NULL LOOP
+            -- Ahora SÍ es seguro leer la tabla LOTES_INVENTARIO
+            SELECT NVL(SUM(li.cantidad), 0) INTO v_stock_actual
+            FROM LOTES_INVENTARIO li
+            WHERE li.id_producto = v_producto_id;
+
+            -- Obtenemos el stock mínimo para comparar
+            SELECT p.stock_minimo INTO v_stock_minimo
+            FROM PRODUCTOS p
+            WHERE p.id_producto = v_producto_id;
+
+            -- Si el stock actual es menor o igual al mínimo, insertamos la noti
+ficación
+            IF v_stock_actual <= v_stock_minimo THEN
+                INSERT INTO NOTIFICACIONES (id_usuario, id_producto, tipo, mensa
+je, fecha_creacion)
+                VALUES (1, v_producto_id, 'Stock Bajo',
+                        'Stock bajo para producto ' || v_producto_id || ' (Stock
+ actual: ' || v_stock_actual || ')', SYSDATE);
+            END IF;
+
+            -- Pasamos al siguiente producto en la lista
+            v_producto_id := g_affected_products.NEXT(v_producto_id);
+        END LOOP;
+    END AFTER STATEMENT;
+END TRG_LOTE_NOTIF_STOCK_BAJO;
+
+ALTER TRIGGER "ALE_YO"."TRG_LOTE_NOTIF_STOCK_BAJO" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_UPDATE_STOCK_ACTUAL" 
+FOR INSERT OR UPDATE OR DELETE ON LOTES_INVENTARIO
+COMPOUND TRIGGER
+    TYPE t_id_producto_tab IS TABLE OF LOTES_INVENTARIO.id_producto%TYPE;
+    l_id_productos t_id_producto_tab := t_id_producto_tab();
+
+    AFTER EACH ROW IS
+    BEGIN
+        IF INSERTING OR UPDATING OR DELETING THEN
+            l_id_productos.EXTEND;
+            l_id_productos(l_id_productos.LAST) := NVL(:NEW.id_producto, :OLD.id
+_producto);
+        END IF;
+    END AFTER EACH ROW;
+
+    AFTER STATEMENT IS
+    BEGIN
+        FOR i IN 1 .. l_id_productos.COUNT LOOP
+            UPDATE PRODUCTOS p
+            SET p.stock_actual = (SELECT NVL(SUM(li.cantidad), 0)
+                                FROM LOTES_INVENTARIO li
+                                WHERE li.id_producto = l_id_productos(i))
+            WHERE p.id_producto = l_id_productos(i);
+        END LOOP;
+        l_id_productos.DELETE;
+    END AFTER STATEMENT;
+
+END TRG_UPDATE_STOCK_ACTUAL;
+
+ALTER TRIGGER "ALE_YO"."TRG_UPDATE_STOCK_ACTUAL" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_LOTE_CADUCIDAD" 
+AFTER INSERT OR UPDATE OF fecha_caducidad ON LOTES_INVENTARIO
+FOR EACH ROW
+DECLARE
+    v_dias_restantes NUMBER;
+BEGIN
+    IF :NEW.fecha_caducidad IS NOT NULL THEN
+        v_dias_restantes := :NEW.fecha_caducidad - TRUNC(SYSDATE);
+        IF v_dias_restantes <= 30 AND v_dias_restantes > 0 THEN
+            INSERT INTO NOTIFICACIONES (id_notificacion, id_usuario, id_producto
+, tipo, mensaje, fecha_creacion)
+            VALUES (SEQ_NOTIFICACIONES.NEXTVAL, 1, :NEW.id_producto, 'Caducidad 
+Próxima',
+                    'Lote ' || :NEW.id_lote || ' caduca en ' || v_dias_restantes
+ || ' días.', SYSDATE);
+        END IF;
+    END IF;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_LOTE_CADUCIDAD" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_DETALLE_VENTA_LOGICA" 
+FOR INSERT OR DELETE OR UPDATE ON DETALLE_VENTAS
+COMPOUND TRIGGER
+    -- Colección para guardar los IDs de las ventas afectadas
+    TYPE T_VENTA_ID IS TABLE OF VENTAS.id_venta%TYPE INDEX BY PLS_INTEGER;
+    v_id_ventas_afectadas T_VENTA_ID;
+
+    -- Se ejecuta una vez por cada fila afectada
+    AFTER EACH ROW IS
+        v_cantidad_restante NUMBER;
+    BEGIN
+        -- Guardamos el ID de la venta afectada para usarla después
+        v_id_ventas_afectadas(NVL(:NEW.id_venta, :OLD.id_venta)) := NVL(:NEW.id_
+venta, :OLD.id_venta);
+
+        IF INSERTING THEN
+            -- Descontar stock del lote
+            UPDATE LOTES_INVENTARIO SET cantidad = cantidad - :NEW.cantidad WHER
+E id_lote = :NEW.id_lote;
+            -- Verificar que no quede stock negativo
+            SELECT cantidad INTO v_cantidad_restante FROM LOTES_INVENTARIO WHERE
+ id_lote = :NEW.id_lote;
+            IF v_cantidad_restante < 0 THEN
+                RAISE_APPLICATION_ERROR(-20001, 'Stock insuficiente o negativo.'
+);
+            END IF;
+        ELSIF DELETING THEN
+            -- Devolver stock al lote
+            UPDATE LOTES_INVENTARIO SET cantidad = cantidad + :OLD.cantidad WHER
+E id_lote = :OLD.id_lote;
+        ELSIF UPDATING ('cantidad') THEN
+            -- Ajustar stock por la diferencia
+            UPDATE LOTES_INVENTARIO SET cantidad = cantidad + (:OLD.cantidad - :
+NEW.cantidad) WHERE id_lote = :NEW.id_lote;
+            -- Verificar que no quede stock negativo
+            SELECT cantidad INTO v_cantidad_restante FROM LOTES_INVENTARIO WHERE
+ id_lote = :NEW.id_lote;
+            IF v_cantidad_restante < 0 THEN
+                RAISE_APPLICATION_ERROR(-20002, 'La actualización resultaría en 
+stock negativo.');
+            END IF;
+        END IF;
+    END AFTER EACH ROW;
+
+    -- Se ejecuta una sola vez al final de toda la operación (INSERT/DELETE/UPDA
+TE)
+    AFTER STATEMENT IS
+        v_key NUMBER; -- Variable para almacenar la clave de la colección
+    BEGIN
+        -- === INICIO DE LA CORRECCIÓN ===
+        -- Recorremos la colección de ventas afectadas de forma segura con un bu
+cle WHILE
+        v_key := v_id_ventas_afectadas.FIRST;
+        WHILE v_key IS NOT NULL LOOP
+            -- Recalculamos el total de la venta sumando los (cantidad * precio)
+ de sus detalles
+            UPDATE VENTAS v
+            SET v.total = (SELECT NVL(SUM(d.cantidad * d.precio_unitario), 0)
+                           FROM DETALLE_VENTAS d
+                           WHERE d.id_venta = v_id_ventas_afectadas(v_key))
+            WHERE v.id_venta = v_id_ventas_afectadas(v_key);
+
+            -- Pasamos a la siguiente venta afectada en la colección
+            v_key := v_id_ventas_afectadas.NEXT(v_key);
+        END LOOP;
+        -- === FIN DE LA CORRECCIÓN ===
+    END AFTER STATEMENT;
+
+END TRG_DETALLE_VENTA_LOGICA;
+ALTER TRIGGER "ALE_YO"."TRG_DETALLE_VENTA_LOGICA" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_DETALLE_VENTAS_BI" 
+BEFORE INSERT ON DETALLE_VENTAS
+FOR EACH ROW
+BEGIN
+    SELECT SEQ_DETALLE_VENTAS.NEXTVAL INTO :NEW.id_detalle FROM DUAL;
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_DETALLE_VENTAS_BI" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_RESTRICT_PRECIOS" 
+BEFORE INSERT OR UPDATE OF precio_compra, precio_venta ON LOTES_INVENTARIO
+FOR EACH ROW
+DECLARE
+    v_rol USUARIOS.rol%TYPE;
+BEGIN
+    -- Obtener el rol del usuario que realiza la operación (simulado con context
+o)
+    -- Nota: Esto requiere integración con la sesión de Spring Boot. Por ahora, 
+usa un valor fijo como ejemplo
+    SELECT rol INTO v_rol
+    FROM USUARIOS
+    WHERE id_usuario = SYS_CONTEXT('USERENV', 'CLIENT_IDENTIFIER'); -- Ajustar c
+on lógica de sesión
+
+    IF v_rol NOT IN ('dueño', 'administrativo') THEN
+        RAISE_APPLICATION_ERROR(-20003, 'Solo los roles "dueño" y "administrativ
+o" pueden modificar precios.');
+    END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20004, 'Usuario no encontrado.');
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20005, 'Error al verificar permisos: ' || SQLER
+RM);
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_RESTRICT_PRECIOS" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_APERTURA_CAJA_AUTO" 
+BEFORE INSERT ON VENTAS
+FOR EACH ROW
+DECLARE
+    v_caja_count      NUMBER;
+    v_usuario_activo  NUMBER;
+BEGIN
+    -- Primero, verificar si el usuario que realiza la venta está activo
+    SELECT activo INTO v_usuario_activo
+    FROM USUARIOS
+    WHERE id_usuario = :NEW.id_usuario;
+
+    IF v_usuario_activo = 0 THEN
+        RAISE_APPLICATION_ERROR(-20011, 'Error: El usuario ' || :NEW.id_usuario 
+|| ' no está activo y no puede realizar ventas.');
+    END IF;
+
+    -- Contar si ya existe una caja para el usuario en la fecha actual (truncada
+ a día)
+    SELECT COUNT(*)
+    INTO v_caja_count
+    FROM CAJA
+    WHERE id_usuario = :NEW.id_usuario
+      AND fecha = TRUNC(:NEW.fecha_venta);
+
+    -- Si no existe (count = 0), crearla con saldo inicial de 0
+    IF v_caja_count = 0 THEN
+        INSERT INTO CAJA (id_usuario, fecha, saldo_inicial, ingresos, egresos)
+        VALUES (:NEW.id_usuario, TRUNC(:NEW.fecha_venta), 0, 0, 0);
+    END IF;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20012, 'Error: El usuario con ID ' || :NEW.id_u
+suario || ' no existe.');
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20013, 'Error inesperado al intentar abrir la c
+aja: ' || SQLERRM);
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_APERTURA_CAJA_AUTO" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_VENTA_ACEPTADA_CAJA" 
+AFTER UPDATE OF estado ON VENTAS
+FOR EACH ROW
+ WHEN (NEW.estado = 'ACEPTADA' AND OLD.estado <> 'ACEPTADA') BEGIN
+    -- Actualiza la caja del usuario en la fecha de la venta, sumando el total a
+ los ingresos.
+    -- El trigger anterior (TRG_APERTURA_CAJA_AUTO) ya se aseguró de que la caja
+ exista.
+    UPDATE CAJA
+    SET ingresos = ingresos + :NEW.total
+    WHERE id_usuario = :NEW.id_usuario
+      AND fecha = TRUNC(:NEW.fecha_venta);
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_VENTA_ACEPTADA_CAJA" ENABLE
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "ALE_YO"."TRG_VENTA_ANULADA_LOGICA" 
+AFTER UPDATE OF estado ON VENTAS
+FOR EACH ROW
+-- Se activa si el nuevo estado es DEVUELTA o CANCELADA (y es diferente al anter
+ior)
+ WHEN ( (NEW.estado = 'DEVUELTA' OR NEW.estado = 'CANCELADA') AND NEW.estado <> 
+OLD.estado ) DECLARE
+    -- Cursor para recorrer cada uno de los productos vendidos en esta venta
+    CURSOR c_detalle_venta IS
+        SELECT id_lote, cantidad
+        FROM DETALLE_VENTAS
+        WHERE id_venta = :NEW.id_venta;
+BEGIN
+    -- 1. Devolver los productos al inventario
+    FOR item IN c_detalle_venta LOOP
+        UPDATE LOTES_INVENTARIO
+        SET cantidad = cantidad + item.cantidad
+        WHERE id_lote = item.id_lote;
+    END LOOP;
+
+    -- 2. Registrar el monto de la venta como un egreso en la caja
+    UPDATE CAJA
+    SET egresos = egresos + :NEW.total
+    WHERE id_usuario = :NEW.id_usuario
+      AND fecha = TRUNC(:NEW.fecha_venta);
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20015, 'Error inesperado al procesar la devoluc
+ión/cancelación: ' || SQLERRM);
+END;
+
+ALTER TRIGGER "ALE_YO"."TRG_VENTA_ANULADA_LOGICA" ENABLE
+
+
+19 filas seleccionadas. 
