@@ -81,25 +81,23 @@ public class ProductoWebController {
 
     @PostMapping("/guardar")
     public String guardarProducto(@ModelAttribute Producto producto, 
-                                 RedirectAttributes redirectAttributes) {
+                                  RedirectAttributes redirectAttributes) {
         try {
-            // Validaciones básicas
             if (producto.getNombre() == null || producto.getNombre().trim().isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "El nombre es obligatorio");
                 return "redirect:/productos/nuevo";
             }
             
-            if (producto.getIdCategoria() == null) {
+            if (producto.getCategoria() == null || producto.getCategoria().getIdCategoria() == null) {
                 redirectAttributes.addFlashAttribute("error", "La categoría es obligatoria");
                 return "redirect:/productos/nuevo";
             }
             
-            if (producto.getIdMarca() == null) {
+            if (producto.getMarca() == null || producto.getMarca().getIdMarca() == null) {
                 redirectAttributes.addFlashAttribute("error", "La marca es obligatoria");
                 return "redirect:/productos/nuevo";
             }
 
-            // Establecer valores por defecto si no están presentes
             if (producto.getStockMinimo() == null) {
                 producto.setStockMinimo(0L);
             }
@@ -107,7 +105,7 @@ public class ProductoWebController {
                 producto.setStockActual(0L);
             }
             if (producto.getActivo() == null) {
-                producto.setActivo(1L);
+                producto.setActivo(true);
             }
 
             productoService.save(producto);

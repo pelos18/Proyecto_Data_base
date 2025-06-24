@@ -6,21 +6,16 @@ import jakarta.persistence.*;
 @Table(name = "marcas")
 public class Marca {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "marca_seq")
-    @SequenceGenerator(name = "marca_seq", sequenceName = "SEQ_MARCAS", allocationSize = 1)
-    @Column(name = "id_marca")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idMarca;
-
-    @Column(name = "nombre", nullable = false, length = 50)
+    
+    // ... el resto de la clase como la tenías, con el constructor con parámetros.
+    @Column(name = "nombre", nullable = false, unique = true)
     private String nombre;
-
-    // Constructores
     public Marca() {}
-
-    // Getters y Setters
+    public Marca(String nombre) { this.nombre = nombre; }
     public Long getIdMarca() { return idMarca; }
     public void setIdMarca(Long idMarca) { this.idMarca = idMarca; }
-
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 }

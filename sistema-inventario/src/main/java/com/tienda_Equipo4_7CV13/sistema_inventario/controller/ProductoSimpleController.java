@@ -41,7 +41,9 @@ public class ProductoSimpleController {
         try {
             // Establecer valores por defecto según tu estructura Oracle
             if (producto.getActivo() == null) {
-                producto.setActivo(1L); // 1 = activo en Oracle
+                // --- CORRECCIÓN AQUÍ ---
+                // Se cambia la asignación de "1L" por el valor booleano "true".
+                producto.setActivo(true);
             }
             if (producto.getStockMinimo() == null) {
                 producto.setStockMinimo(5L);

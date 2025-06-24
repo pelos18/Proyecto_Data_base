@@ -8,8 +8,7 @@ import java.time.LocalDate;
 @Table(name = "lotes_inventario")
 public class LoteInventario {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lote_seq")
-    @SequenceGenerator(name = "lote_seq", sequenceName = "SEQ_LOTES_INVENTARIO", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_lote")
     private Long idLote;
 
@@ -17,7 +16,10 @@ public class LoteInventario {
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto producto;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // --- CORRECCIÓN FINAL Y DEFINITIVA AQUÍ ---
+    // Se añade cascade para que al guardar un Lote, también se guarde
+    // el Proveedor si es nuevo, solucionando el error ORA-02291.
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "id_proveedor")
     private Proveedor proveedor;
 
@@ -36,34 +38,26 @@ public class LoteInventario {
     @Column(name = "fecha_caducidad")
     private LocalDate fechaCaducidad;
 
-    // Constructores
+    // Constructores, Getters y Setters...
     public LoteInventario() {}
 
-    // Getters y Setters
     public Long getIdLote() { return idLote; }
     public void setIdLote(Long idLote) { this.idLote = idLote; }
-
     public Producto getProducto() { return producto; }
     public void setProducto(Producto producto) { this.producto = producto; }
-
     public Proveedor getProveedor() { return proveedor; }
     public void setProveedor(Proveedor proveedor) { this.proveedor = proveedor; }
-
     public Integer getCantidad() { return cantidad; }
     public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
-
     public BigDecimal getPrecioCompra() { return precioCompra; }
     public void setPrecioCompra(BigDecimal precioCompra) { this.precioCompra = precioCompra; }
-
     public BigDecimal getPrecioVenta() { return precioVenta; }
     public void setPrecioVenta(BigDecimal precioVenta) { this.precioVenta = precioVenta; }
-
     public LocalDate getFechaIngreso() { return fechaIngreso; }
     public void setFechaIngreso(LocalDate fechaIngreso) { this.fechaIngreso = fechaIngreso; }
-
     public LocalDate getFechaCaducidad() { return fechaCaducidad; }
     public void setFechaCaducidad(LocalDate fechaCaducidad) { this.fechaCaducidad = fechaCaducidad; }
-
+    
     @PrePersist
     public void prePersist() {
         if (fechaIngreso == null) {

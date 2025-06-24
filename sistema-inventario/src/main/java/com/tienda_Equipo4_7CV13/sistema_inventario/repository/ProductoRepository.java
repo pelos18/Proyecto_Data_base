@@ -9,30 +9,29 @@ import java.util.List;
 
 @Repository
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
-    
-    // Métodos básicos usando valores numéricos para Oracle (1 = activo, 0 = inactivo)
-    @Query("SELECT p FROM Producto p WHERE p.activo = 1")
+
+    // --- MÉTODOS CORREGIDOS Y AÑADIDOS ---
+
+    // Corregido para buscar a través de la relación de objetos
+    @Query("SELECT p FROM Producto p WHERE p.categoria.idCategoria = :idCategoria")
+    List<Producto> findByCategoriaId(@Param("idCategoria") Long idCategoria);
+
+    // Para los métodos que usan "activo" (campo ahora es Boolean)
     List<Producto> findByActivoTrue();
-    
-    @Query("SELECT p FROM Producto p WHERE p.idCategoria = :categoriaId AND p.activo = 1")
-    List<Producto> findByCategoriaIdCategoriaAndActivoTrue(@Param("categoriaId") Long categoriaId);
-    
-    List<Producto> findByIdCategoria(Long categoriaId);
-    List<Producto> findByIdMarca(Long marcaId);
-    
-    // Métodos de búsqueda
+
+    // Para búsqueda general (usado en CatalogoController)
     List<Producto> findByNombreContainingIgnoreCaseOrCodigoBarrasContaining(String nombre, String codigoBarras);
-    List<Producto> findByNombreContainingIgnoreCase(String nombre);
+
+    // Para validación
     boolean existsByCodigoBarras(String codigoBarras);
-    
-    // Métodos de conteo usando valores numéricos
-    @Query("SELECT COUNT(p) FROM Producto p WHERE p.activo = 1")
+
+    // Para reportes y estadísticas (usado en ProductoService y Dashboard)
+    @Query("SELECT COUNT(p) FROM Producto p WHERE p.activo = true")
     Long countProductosActivos();
-    
-    @Query("SELECT COUNT(p) FROM Producto p WHERE p.stockMinimo >= p.stockActual AND p.activo = 1")
-    Long countProductosStockBajo();
-    
-    // Método para productos con stock bajo usando valores numéricos
-    @Query("SELECT p FROM Producto p WHERE p.stockMinimo >= p.stockActual AND p.activo = 1")
+
+    @Query("SELECT p FROM Producto p WHERE p.activo = true AND p.stockActual <= p.stockMinimo")
     List<Producto> findProductosConStockBajo();
+
+    @Query("SELECT COUNT(p) FROM Producto p WHERE p.activo = true AND p.stockActual <= p.stockMinimo")
+    Long countProductosStockBajo();
 }
