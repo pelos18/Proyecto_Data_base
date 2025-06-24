@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acción 1: Proveedor, Categoría y Marca - Sistema de Inventario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-warehouse me-2"></i>Sistema de Inventario
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-plus me-2"></i>ACCIÓN 1 de 2: Proveedor, Categoría y Marca
+                        </h4>
+                        <small>Paso 1: 🚛 Proveedor → Paso 2: 📂 Categoría → Paso 3: 🏷️ Marca</small>
+                    </div>
+                    <div class="card-body">
+                        <!-- Alertas -->
+                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span th:text="${success}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span th:text="${error}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <form action="/inventario/guardar-accion1" method="post">
+                            <div class="row">
+                                <!-- Datos del Proveedor -->
+                                <div class="col-md-4">
+                                    <h6 class="text-warning"><i class="fas fa-truck me-2"></i>🚛 PASO 1: Datos del Proveedor</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="proveedorNombre" class="form-label">Nombre del Proveedor *</label>
+                                        <input type="text" class="form-control" id="proveedorNombre" 
+                                               name="proveedorNombre" placeholder="Nombre del proveedor" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="proveedorTelefono" class="form-label">Teléfono</label>
+                                        <input type="text" class="form-control" id="proveedorTelefono" 
+                                               name="proveedorTelefono" placeholder="Teléfono del proveedor">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="proveedorDireccion" class="form-label">Dirección</label>
+                                        <input type="text" class="form-control" id="proveedorDireccion" 
+                                               name="proveedorDireccion" placeholder="Dirección del proveedor">
+                                    </div>
+                                </div>
+
+                                <!-- Datos de la Categoría -->
+                                <div class="col-md-4">
+                                    <h6 class="text-success"><i class="fas fa-folder me-2"></i>📂 PASO 2: Datos de la Categoría</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="categoriaNombre" class="form-label">Categoría *</label>
+                                        <input type="text" class="form-control" id="categoriaNombre" 
+                                               name="categoriaNombre" placeholder="Nombre de la categoría" required>
+                                        <div class="form-text">Se creará automáticamente si no existe</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="categoriaDescripcion" class="form-label">Descripción de Categoría</label>
+                                        <textarea class="form-control" id="categoriaDescripcion" 
+                                                  name="categoriaDescripcion" rows="3" 
+                                                  placeholder="Descripción de la categoría"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Datos de la Marca -->
+                                <div class="col-md-4">
+                                    <h6 class="text-info"><i class="fas fa-tag me-2"></i>🏷️ PASO 3: Datos de la Marca</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="marcaNombre" class="form-label">Marca *</label>
+                                        <input type="text" class="form-control" id="marcaNombre" 
+                                               name="marcaNombre" placeholder="Nombre de la marca" required>
+                                        <div class="form-text">Se creará automáticamente si no existe</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="/dashboard" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-arrow-right me-2"></i>Continuar a Acción 2 (Lote + Producto)
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

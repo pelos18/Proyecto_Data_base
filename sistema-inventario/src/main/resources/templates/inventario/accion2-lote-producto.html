@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acción 2: Lote y Producto - Sistema de Inventario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-warehouse me-2"></i>Sistema de Inventario
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-check me-2"></i>ACCIÓN 2 de 2: Lote y Producto
+                        </h4>
+                        <small>Paso 4: 💰 Lote → Paso 5: 📱 Producto</small>
+                        <div class="mt-2">
+                            <strong>Datos de Acción 1:</strong> 
+                            🚛 <span th:text="${proveedorNombre}"></span> | 
+                            📂 <span th:text="${categoriaNombre}"></span> | 
+                            🏷️ <span th:text="${marcaNombre}"></span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Alertas -->
+                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span th:text="${success}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span th:text="${error}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <form action="/inventario/guardar-accion2" method="post">
+                            <div class="row">
+                                <!-- Datos del Lote -->
+                                <div class="col-md-6">
+                                    <h6 class="text-info"><i class="fas fa-layer-group me-2"></i>💰 PASO 4: Datos del Lote</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="loteCantidad" class="form-label">Cantidad *</label>
+                                        <input type="number" class="form-control" id="loteCantidad" 
+                                               name="loteCantidad" placeholder="Cantidad inicial" min="1" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="lotePrecioCompra" class="form-label">Precio de Compra *</label>
+                                        <input type="number" class="form-control" id="lotePrecioCompra" 
+                                               name="lotePrecioCompra" placeholder="0.00" step="0.01" min="0" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="lotePrecioVenta" class="form-label">Precio de Venta *</label>
+                                        <input type="number" class="form-control" id="lotePrecioVenta" 
+                                               name="lotePrecioVenta" placeholder="0.00" step="0.01" min="0" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="loteFechaCaducidad" class="form-label">Fecha de Caducidad</label>
+                                        <input type="date" class="form-control" id="loteFechaCaducidad" 
+                                               name="loteFechaCaducidad">
+                                        <div class="form-text">Opcional</div>
+                                    </div>
+                                </div>
+
+                                <!-- Datos del Producto -->
+                                <div class="col-md-6">
+                                    <h6 class="text-primary"><i class="fas fa-box me-2"></i>📱 PASO 5: Datos del Producto</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="productoCodigoBarras" class="form-label">Código de Barras</label>
+                                        <input type="text" class="form-control" id="productoCodigoBarras" 
+                                               name="productoCodigoBarras" th:value="${codigoBarrasGenerado}" readonly>
+                                        <div class="form-text">Generado automáticamente</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="productoNombre" class="form-label">Nombre *</label>
+                                        <input type="text" class="form-control" id="productoNombre" 
+                                               name="productoNombre" placeholder="Nombre del producto" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="productoDescripcion" class="form-label">Descripción</label>
+                                        <textarea class="form-control" id="productoDescripcion" 
+                                                  name="productoDescripcion" rows="3" 
+                                                  placeholder="Descripción del producto"></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="productoStockMinimo" class="form-label">Stock Mínimo *</label>
+                                        <input type="number" class="form-control" id="productoStockMinimo" 
+                                               name="productoStockMinimo" value="5" min="0" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="/inventario/nuevo-completo" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Volver a Acción 1
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save me-2"></i>Finalizar - Crear Inventario Completo
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
