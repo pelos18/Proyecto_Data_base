@@ -3,119 +3,193 @@ package com.tienda_Equipo4_7CV13.sistema_inventario.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "PRODUCTOS")
+@Table(name = "productos")
 public class Producto {
-    
-    @Id
-    @Column(name = "ID_PRODUCTO", nullable = false)
-    private Long idProducto; // NO usar @GeneratedValue porque el trigger lo maneja
 
-    @Column(name = "CODIGO_BARRAS", length = 100, nullable = true)
+    @Id
+    @Column(name = "id_producto")
+    private Long idProducto;
+
+    @Column(name = "codigo_barras", length = 100)
     private String codigoBarras;
 
-    @Column(name = "NOMBRE", length = 150, nullable = false)
+    @Column(name = "nombre", length = 150, nullable = false)
     private String nombre;
 
-    @Column(name = "DESCRIPCION", length = 255, nullable = true)
+    @Column(name = "descripcion", length = 255)
     private String descripcion;
 
-    @Column(name = "ID_CATEGORIA", nullable = false)
+    @Column(name = "id_categoria", nullable = false)
     private Long idCategoria;
 
-    @Column(name = "ID_MARCA", nullable = false)
+    @Column(name = "id_marca", nullable = false)
     private Long idMarca;
 
-    @Column(name = "STOCK_MINIMO", nullable = false)
-    private Long stockMinimo = 0L; // Valor por defecto
+    @Column(name = "stock_minimo")
+    private Long stockMinimo;
 
-    @Column(name = "STOCK_ACTUAL", nullable = false)
-    private Long stockActual = 0L; // Valor por defecto
+    @Column(name = "stock_actual")
+    private Long stockActual;
 
-    @Column(name = "ACTIVO", nullable = false)
-    private Long activo = 1L; // Valor por defecto (1 = activo, 0 = inactivo)
+    @Column(name = "activo")
+    private Long activo;
 
-    // Relaciones opcionales para mostrar nombres (LAZY para evitar problemas)
+    // Relaciones JPA para obtener nombres (LAZY para evitar problemas)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_CATEGORIA", insertable = false, updatable = false)
+    @JoinColumn(name = "id_categoria", insertable = false, updatable = false)
     private Categoria categoria;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_MARCA", insertable = false, updatable = false)
+    @JoinColumn(name = "id_marca", insertable = false, updatable = false)
     private Marca marca;
 
-    // Constructores
+    // Constructor vacío
     public Producto() {
-        this.stockMinimo = 0L;
-        this.stockActual = 0L;
         this.activo = 1L;
+        this.stockActual = 0L;
+        this.stockMinimo = 0L;
     }
 
-    public Producto(String codigoBarras, String nombre, String descripcion, 
-                   Long idCategoria, Long idMarca, Long stockMinimo) {
+    // Constructor con parámetros básicos
+    public Producto(String nombre, String descripcion, String codigoBarras, Long stockMinimo) {
         this();
-        this.codigoBarras = codigoBarras;
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.codigoBarras = codigoBarras;
+        this.stockMinimo = stockMinimo;
+    }
+
+    // Constructor completo
+    public Producto(String nombre, String descripcion, String codigoBarras, 
+                   Long idCategoria, Long idMarca, Long stockMinimo) {
+        this();
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.codigoBarras = codigoBarras;
         this.idCategoria = idCategoria;
         this.idMarca = idMarca;
-        this.stockMinimo = stockMinimo != null ? stockMinimo : 0L;
+        this.stockMinimo = stockMinimo;
     }
 
     // Getters y Setters
-    public Long getIdProducto() { return idProducto; }
-    public void setIdProducto(Long idProducto) { this.idProducto = idProducto; }
-
-    public String getCodigoBarras() { return codigoBarras; }
-    public void setCodigoBarras(String codigoBarras) { this.codigoBarras = codigoBarras; }
-
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-
-    public Long getIdCategoria() { return idCategoria; }
-    public void setIdCategoria(Long idCategoria) { this.idCategoria = idCategoria; }
-
-    public Long getIdMarca() { return idMarca; }
-    public void setIdMarca(Long idMarca) { this.idMarca = idMarca; }
-
-    public Long getStockMinimo() { return stockMinimo; }
-    public void setStockMinimo(Long stockMinimo) { 
-        this.stockMinimo = stockMinimo != null ? stockMinimo : 0L; 
+    public Long getIdProducto() {
+        return idProducto;
     }
 
-    public Long getStockActual() { return stockActual; }
-    public void setStockActual(Long stockActual) { 
-        this.stockActual = stockActual != null ? stockActual : 0L; 
+    public void setIdProducto(Long idProducto) {
+        this.idProducto = idProducto;
     }
 
-    public Long getActivo() { return activo; }
-    public void setActivo(Long activo) { 
-        this.activo = activo != null ? activo : 1L; 
+    public String getCodigoBarras() {
+        return codigoBarras;
     }
 
-    // Métodos de conveniencia para boolean
-    public boolean isActivo() { return this.activo != null && this.activo == 1L; }
-    public void setActivoBoolean(boolean activo) { this.activo = activo ? 1L : 0L; }
+    public void setCodigoBarras(String codigoBarras) {
+        this.codigoBarras = codigoBarras;
+    }
 
-    public Categoria getCategoria() { return categoria; }
-    public void setCategoria(Categoria categoria) { this.categoria = categoria; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public Marca getMarca() { return marca; }
-    public void setMarca(Marca marca) { this.marca = marca; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Long getIdCategoria() {
+        return idCategoria;
+    }
+
+    public void setIdCategoria(Long idCategoria) {
+        this.idCategoria = idCategoria;
+    }
+
+    public Long getIdMarca() {
+        return idMarca;
+    }
+
+    public void setIdMarca(Long idMarca) {
+        this.idMarca = idMarca;
+    }
+
+    public Long getStockMinimo() {
+        return stockMinimo;
+    }
+
+    public void setStockMinimo(Long stockMinimo) {
+        this.stockMinimo = stockMinimo;
+    }
+
+    public Long getStockActual() {
+        return stockActual;
+    }
+
+    public void setStockActual(Long stockActual) {
+        this.stockActual = stockActual;
+    }
+
+    public Long getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Long activo) {
+        this.activo = activo;
+    }
+
+    // Relaciones JPA
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+        if (categoria != null) {
+            this.idCategoria = categoria.getIdCategoria();
+        }
+    }
+
+    public Marca getMarca() {
+        return marca;
+    }
+
+    public void setMarca(Marca marca) {
+        this.marca = marca;
+        if (marca != null) {
+            this.idMarca = marca.getIdMarca();
+        }
+    }
+
+    // Métodos de utilidad
+    public boolean isActivo() {
+        return this.activo != null && this.activo == 1L;
+    }
+
+    public void activar() {
+        this.activo = 1L;
+    }
+
+    public void desactivar() {
+        this.activo = 0L;
+    }
 
     @Override
     public String toString() {
         return "Producto{" +
                 "idProducto=" + idProducto +
-                ", codigoBarras='" + codigoBarras + '\'' +
                 ", nombre='" + nombre + '\'' +
-                ", descripcion='" + descripcion + '\'' +
+                ", codigoBarras='" + codigoBarras + '\'' +
                 ", idCategoria=" + idCategoria +
                 ", idMarca=" + idMarca +
-                ", stockMinimo=" + stockMinimo +
                 ", stockActual=" + stockActual +
+                ", stockMinimo=" + stockMinimo +
                 ", activo=" + activo +
                 '}';
     }

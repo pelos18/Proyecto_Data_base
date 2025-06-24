@@ -14,9 +14,6 @@ public class Proveedor {
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @Column(name = "contacto", length = 100)
-    private String contacto;
-
     @Column(name = "telefono", length = 20)
     private String telefono;
 
@@ -34,9 +31,6 @@ public class Proveedor {
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getContacto() { return contacto; }
-    public void setContacto(String contacto) { this.contacto = contacto; }
 
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }

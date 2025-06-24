@@ -90,6 +90,11 @@ public class InventarioController {
             if (producto.getStockMinimo() == null) producto.setStockMinimo(5L);
             producto.setActivo(1L);
 
+            // Establecer IDs manualmente para evitar error de persistencia
+            if (producto.getIdProducto() == null) {
+                // El trigger se encargará del ID
+            }
+
             productoService.save(producto);
             
             redirectAttributes.addFlashAttribute("success", 

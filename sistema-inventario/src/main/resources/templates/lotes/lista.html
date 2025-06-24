@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Productos - Sistema de Inventario</title>
+    <title>Lista de Lotes - Sistema de Inventario</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -37,10 +37,10 @@
                     <a href="/inventario" class="list-group-item list-group-item-action">
                         <i class="fas fa-warehouse me-2"></i>Inventario
                     </a>
-                    <a href="/inventario/productos" class="list-group-item list-group-item-action active">
+                    <a href="/inventario/productos" class="list-group-item list-group-item-action">
                         <i class="fas fa-box me-2"></i>Productos
                     </a>
-                    <a href="/inventario/lotes" class="list-group-item list-group-item-action">
+                    <a href="/inventario/lotes" class="list-group-item list-group-item-action active">
                         <i class="fas fa-layer-group me-2"></i>Lotes
                     </a>
                     <a href="/inventario/categorias" class="list-group-item list-group-item-action">
@@ -55,13 +55,13 @@
             <!-- Contenido Principal -->
             <div class="col-md-10">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2><i class="fas fa-box me-2"></i>Lista de Productos</h2>
+                    <h2><i class="fas fa-layer-group me-2"></i>Lista de Lotes de Inventario</h2>
                     <div>
-                        <a href="/inventario/nuevo-completo" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>Crear Producto Completo
+                        <a href="/inventario/lotes/nuevo" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Nuevo Lote
                         </a>
-                        <a href="/inventario/agregar-stock" class="btn btn-success">
-                            <i class="fas fa-plus-circle me-2"></i>Agregar Stock
+                        <a href="/inventario/nuevo-completo" class="btn btn-success">
+                            <i class="fas fa-plus-circle me-2"></i>Producto + Lote
                         </a>
                     </div>
                 </div>
@@ -79,52 +79,50 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
 
-                <!-- Tabla de Productos -->
+                <!-- Tabla de Lotes -->
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Código de Barras</th>
-                                        <th>Nombre</th>
-                                        <th>Descripción</th>
-                                        <th>Categoría</th>
-                                        <th>Marca</th>
-                                        <th>Stock Actual</th>
-                                        <th>Stock Mínimo</th>
+                                        <th>ID Lote</th>
+                                        <th>Producto</th>
+                                        <th>Proveedor</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Compra</th>
+                                        <th>Precio Venta</th>
+                                        <th>Fecha Ingreso</th>
+                                        <th>Fecha Caducidad</th>
                                         <th>Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:if="${productos.empty}">
+                                    <tr th:if="${lotes.empty}">
                                         <td colspan="9" class="text-center text-muted py-4">
-                                            <i class="fas fa-box-open fa-3x mb-3"></i>
-                                            <br>No hay productos registrados
+                                            <i class="fas fa-layer-group fa-3x mb-3"></i>
+                                            <br>No hay lotes registrados
                                             <br>
                                             <a href="/inventario/nuevo-completo" class="btn btn-primary mt-2">
-                                                <i class="fas fa-plus me-1"></i>Crear Primer Producto
+                                                <i class="fas fa-plus me-1"></i>Crear Primer Lote
                                             </a>
                                         </td>
                                     </tr>
-                                    <tr th:each="producto : ${productos}">
-                                        <td th:text="${producto.idProducto}"></td>
+                                    <tr th:each="lote : ${lotes}">
+                                        <td th:text="${lote.idLote}"></td>
+                                        <td th:text="${lote.producto?.nombre ?: 'ID: ' + lote.idProducto}"></td>
+                                        <td th:text="${lote.proveedor?.nombre ?: 'ID: ' + lote.idProveedor}"></td>
                                         <td>
-                                            <code th:text="${producto.codigoBarras}"></code>
+                                            <span th:class="${lote.cantidad > 0} ? 'badge bg-success' : 'badge bg-danger'"
+                                                  th:text="${lote.cantidad}"></span>
                                         </td>
-                                        <td th:text="${producto.nombre}"></td>
-                                        <td th:text="${producto.descripcion}"></td>
-                                        <td th:text="${producto.idCategoria}"></td>
-                                        <td th:text="${producto.idMarca}"></td>
+                                        <td th:text="'$' + ${lote.precioCompra}"></td>
+                                        <td th:text="'$' + ${lote.precioVenta}"></td>
+                                        <td th:text="${lote.fechaIngreso}"></td>
+                                        <td th:text="${lote.fechaCaducidad ?: 'Sin fecha'}"></td>
                                         <td>
-                                            <span th:class="${producto.stockActual <= producto.stockMinimo} ? 'badge bg-danger' : 'badge bg-success'"
-                                                  th:text="${producto.stockActual}"></span>
-                                        </td>
-                                        <td th:text="${producto.stockMinimo}"></td>
-                                        <td>
-                                            <span th:class="${producto.activo == 1} ? 'badge bg-success' : 'badge bg-secondary'"
-                                                  th:text="${producto.activo == 1} ? 'Activo' : 'Inactivo'"></span>
+                                            <span th:class="${lote.cantidad > 0} ? 'badge bg-success' : 'badge bg-secondary'"
+                                                  th:text="${lote.cantidad > 0} ? 'Disponible' : 'Agotado'"></span>
                                         </td>
                                     </tr>
                                 </tbody>

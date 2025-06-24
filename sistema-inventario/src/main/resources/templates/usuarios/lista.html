@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Sistema de Inventario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-crown me-2"></i>Panel de Administración
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="fas fa-user-shield me-1"></i>
+                    Admin: <span th:text="${usuario?.nombre ?: 'Administrador'}"></span>
+                </span>
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 bg-light vh-100 p-3">
+                <div class="nav flex-column nav-pills">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                    <a href="/inventario/productos" class="nav-link">
+                        <i class="fas fa-box me-2"></i>Productos
+                    </a>
+                    <a href="/inventario" class="nav-link">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                    </a>
+                    <a href="/ventas" class="nav-link">
+                        <i class="fas fa-chart-line me-2"></i>Ventas
+                    </a>
+                    <a href="/clientes" class="nav-link">
+                        <i class="fas fa-users me-2"></i>Clientes
+                    </a>
+                    <a href="/proveedores" class="nav-link">
+                        <i class="fas fa-truck me-2"></i>Proveedores
+                    </a>
+                    <a href="/reportes" class="nav-link">
+                        <i class="fas fa-file-alt me-2"></i>Reportes
+                    </a>
+                    <a href="/usuarios" class="nav-link active">
+                        <i class="fas fa-user-cog me-2"></i>Usuarios
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contenido Principal -->
+            <div class="col-md-10 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-user-cog me-2"></i>Gestión de Usuarios</h2>
+                    <a href="/registro-empleado" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Nuevo Usuario
+                    </a>
+                </div>
+
+                <!-- Alertas -->
+                <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span th:text="${param.success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span th:text="${param.error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Tabla de Usuarios -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Usuario</th>
+                                        <th>Nombre</th>
+                                        <th>Rol</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${usuarios.empty}">
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            <i class="fas fa-user-cog fa-3x mb-3"></i>
+                                            <br>No hay usuarios registrados
+                                            <br>
+                                            <a href="/registro-empleado" class="btn btn-primary mt-2">
+                                                <i class="fas fa-plus me-1"></i>Crear Primer Usuario
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr th:each="usuario : ${usuarios}">
+                                        <td th:text="${usuario.idUsuario}"></td>
+                                        <td>
+                                            <strong th:text="${usuario.usuario}"></strong>
+                                        </td>
+                                        <td th:text="${usuario.nombre}"></td>
+                                        <td>
+                                            <span th:class="${usuario.rol == 'dueño'} ? 'badge bg-danger' : 
+                                                           (${usuario.rol == 'administrativo'} ? 'badge bg-warning' : 'badge bg-info')"
+                                                  th:text="${usuario.rol}"></span>
+                                        </td>
+                                        <td>
+                                            <span th:class="${usuario.activo} ? 'badge bg-success' : 'badge bg-secondary'"
+                                                  th:text="${usuario.activo} ? 'Activo' : 'Inactivo'"></span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a th:href="@{/usuarios/detalle/{id}(id=${usuario.idUsuario})}" 
+                                                   class="btn btn-sm btn-outline-info" title="Ver Detalles">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <button type="button" 
+                                                        th:if="${usuario.activo}"
+                                                        class="btn btn-sm btn-outline-warning" 
+                                                        th:onclick="'desactivarUsuario(' + ${usuario.idUsuario} + ')'" 
+                                                        title="Desactivar">
+                                                    <i class="fas fa-user-slash"></i>
+                                                </button>
+                                                <button type="button" 
+                                                        th:if="${!usuario.activo}"
+                                                        class="btn btn-sm btn-outline-success" 
+                                                        th:onclick="'activarUsuario(' + ${usuario.idUsuario} + ')'" 
+                                                        title="Activar">
+                                                    <i class="fas fa-user-check"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function activarUsuario(id) {
+            if (confirm('¿Estás seguro de que deseas activar este usuario?')) {
+                fetch(`/usuarios/activar/${id}`, {
+                    method: 'POST'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Error al activar el usuario');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al activar el usuario');
+                });
+            }
+        }
+
+        function desactivarUsuario(id) {
+            if (confirm('¿Estás seguro de que deseas desactivar este usuario?')) {
+                fetch(`/usuarios/desactivar/${id}`, {
+                    method: 'POST'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Error al desactivar el usuario');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al desactivar el usuario');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

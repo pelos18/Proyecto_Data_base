@@ -4,9 +4,12 @@ import com.tienda_Equipo4_7CV13.sistema_inventario.entity.Producto;
 import com.tienda_Equipo4_7CV13.sistema_inventario.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
+@Transactional
 public class ProductoServiceImpl implements ProductoService {
 
     @Autowired
@@ -28,6 +31,7 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
+    @Transactional
     public Producto save(Producto producto) {
         return productoRepository.save(producto);
     }

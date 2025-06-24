@@ -14,14 +14,15 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     @Query("SELECT p FROM Producto p WHERE p.activo = 1")
     List<Producto> findByActivoTrue();
     
-    @Query("SELECT p FROM Producto p WHERE p.categoria.idCategoria = :categoriaId AND p.activo = 1")
+    @Query("SELECT p FROM Producto p WHERE p.idCategoria = :categoriaId AND p.activo = 1")
     List<Producto> findByCategoriaIdCategoriaAndActivoTrue(@Param("categoriaId") Long categoriaId);
     
-    List<Producto> findByCategoriaIdCategoria(Long categoriaId);
-    List<Producto> findByMarcaIdMarca(Long marcaId);
+    List<Producto> findByIdCategoria(Long categoriaId);
+    List<Producto> findByIdMarca(Long marcaId);
     
     // Métodos de búsqueda
     List<Producto> findByNombreContainingIgnoreCaseOrCodigoBarrasContaining(String nombre, String codigoBarras);
+    List<Producto> findByNombreContainingIgnoreCase(String nombre);
     boolean existsByCodigoBarras(String codigoBarras);
     
     // Métodos de conteo usando valores numéricos
